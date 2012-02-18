@@ -1,6 +1,6 @@
 {
     "name": "fluent-logger",
-    "version": "0.0.1",
+    "version": "0.0.3",
     "main": "./lib/index.js",
     "author": {
         "name": "Yohei Sasaki",
@@ -10,6 +10,10 @@
     "repository": {
         "type": "git",
         "url": "http://github.com/yssk22/fluent-logger-node"
+    },
+    "devDependencies": {
+        "mocha": "",
+        "chai": ""
     },
     "keywords": ["logger", "fluent"]
 }
