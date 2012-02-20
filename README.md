@@ -25,9 +25,12 @@ Fluent daemon should listen on TCP port.
     // send an event record with 'tag.label'
     logger.emit('label', {record: 'this is a log'});
 
+## Build Status
+
+http://jenkins-yssk22.dotcloud.com/job/fluent-logger-node/
+
 ## License
 
 Apache License, Version 2.0
 
 [fluent-logger-python]: https://github.com/fluent/fluent-logger-python
-
