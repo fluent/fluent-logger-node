@@ -13,7 +13,8 @@
     },
     "devDependencies": {
         "mocha": "",
-        "chai": ""
+        "chai": "",
+        "log4js": ""
     },
     "keywords": ["logger", "fluent"]
 }
