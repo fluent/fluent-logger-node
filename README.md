@@ -18,19 +18,33 @@ Fluent daemon should listen on TCP port.
     // The 2nd argument can be omitted. Here is a defualt value for options.
     logger.configure('tag', {
        host: 'localhost',  
-       port: 24224
+       port: 24224,
        timeout: 3.0
     });
    
     // send an event record with 'tag.label'
     logger.emit('label', {record: 'this is a log'});
 
-## Build Status
+## Logging Library Support
 
-http://jenkins-yssk22.dotcloud.com/job/fluent-logger-node/
+### log4js
+
+Befre using [log4js] support, you should install it IN YOUR APPLICATION.
+
+
+    var log4js = require('log4js');
+    log4js.addAppender(require('fluent-logger').support.log4jsAppender('mytag', {
+       host: 'localhost',
+       port: 24224,
+       timeout: 3.0
+    }));
+    
+    var logger = log4js.getLogger('foo');
+    logger.info('this log record is sent to fluent daemon');
 
 ## License
 
-Apache License, Version 2.0
+Apache License, Version 2.0.
 
 [fluent-logger-python]: https://github.com/fluent/fluent-logger-python
+
