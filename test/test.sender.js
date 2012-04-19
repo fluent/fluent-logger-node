@@ -1,84 +1,92 @@
 var expect = require('chai').expect;
 var sender = require('../lib/sender');
 var fluentd = require('../lib/testHelper').fluentd;
+var async = require('async');
 
-describe("sender", function(){
-  describe("FluentSernder", function(){
-    before(function(done){
-      fluentd(function(err, fluentd){
-        done();
-      });
-    });
+describe("FluentSender", function(){
 
-    it('should send an object and close connection.', function(done){
-      var s = new sender.FluentSender('debug');
-      var record = {
-        string: 'a',
-        number: 1,
-        object: {
-          a: 'b'
-        },
-        array: [1,2,3],
-        bool: true,
-        null: null,
-        undefined: undefined
-      };
-      s.end('test send object', record, function(){
-        // FIXME make sure the connection is closed.
-        done();
-      });
-    }); // should send an object;
-
-    it('should use a queue and flush it after it ends.', function(done){
-      var s = new sender.FluentSender('debug');
-      var called = 0;
-      s.emit('1st record', '1st record', function(){
-        called++;
-        expect(called).to.be.equal(1); // confirm callbacks are called.
-      });
-      s.emit('2nd record', '2nd record', function(){
-        called++;
-        expect(called).to.be.equal(2); // confirm callbacks are called.
-      });
-      s.end('last record', 'last record', function(){
-        called++;
-        expect(called).to.be.equal(3); // confirm callbacks are called.
-        expect(s._sendQueue.length).to.be.equal(0);
-        done();
-      });
-      expect(s._sendQueue.length).to.be.equal(3);
-    });
-
-    it('should raise error when connection fails', function(done){
-      var s = new sender.FluentSender('debug', {
-        host: 'localhost',
-        port: 65535
-      });
-      s.on('error', function(err){
-        expect(err.code).to.be.equal('ECONNREFUSED');
-        done();
-      });
-      s.emit('test connection error', 'foobar');
-    });
-
-    it('should resume the connection automatically and flush the queue', function(done){
-      var s = new sender.FluentSender('queuing', {
-        host: 'localhost',
-        port: 65535
-      });
-      s.on('error', function(err){
-        expect(err.code).to.be.equal('ECONNREFUSED');
-        expect(s._sendQueue.length, 1); // buffered queue
-        // set the correct port.
-        s.port = 24224;
-        s.end('test queueing', 'done', function(){
-          expect(s._sendQueue.length).to.be.equal(0);
+  it('shoud send records', function(done){
+    fluentd(function(err, proc){
+      var s1 = new sender.FluentSender('debug');
+      var emits = [];
+      for(var i=0; i<10; i++){
+        (function(k){
+          emits.push(function(done){ s1.emit('record', k, done); });
+        })(i);
+      }
+      emits.push(function(){
+        proc.kill("SIGTERM");
+        proc.on('exit', function(exitCode){
+          expect(exitCode).to.be.equal(0);
+          var data = proc.receivedData;
+          expect(data.length).to.be.equal(10);
+          for(var i=0; i<10; i++){
+            expect(data[i].tag).to.be.equal("debug.record");
+            expect(data[i].data).to.be.equal(i);
+          }
           done();
         });
-        expect(s._sendQueue.length).to.be.equal(2);
       });
-      s.emit('test queueing', 'pended');
-      expect(s._sendQueue.length).to.be.equal(1);
+      async.series(emits);
     });
+  });
+
+  it('should raise error when connection fails', function(done){
+    var s = new sender.FluentSender('debug', {
+      host: 'localhost',
+      port: 65535
+    });
+    s.on('error', function(err){
+      expect(err.code).to.be.equal('ECONNREFUSED');
+      done();
+    });
+    s.emit('test connection error', 'foobar');
+  });
+
+
+  it('should assure the sequence.', function(done){
+    fluentd(function(err, proc){
+      var s = new sender.FluentSender('debug');
+      s.emit('1st record', '1st data');
+      s.emit('2nd record', '2nd data');
+      s.end('last record', 'last data', function(){
+        proc.kill();
+        proc.on('exit', function(exitCode){
+          var data = proc.receivedData;
+          expect(data[0].tag).to.be.equal('debug.1st record');
+          expect(data[0].data).to.be.equal('1st data');
+          expect(data[1].tag).to.be.equal('debug.2nd record');
+          expect(data[1].data).to.be.equal('2nd data');
+          expect(data[2].tag).to.be.equal('debug.last record');
+          expect(data[2].data).to.be.equal('last data');
+          done();
+        });
+      });
+    });
+  });
+
+  it('should resume the connection automatically and flush the queue', function(done){
+    var s = new sender.FluentSender('debug');
+    s.emit('1st record', '1st data');
+    s.on('error', function(err){
+      expect(err.code).to.be.equal('ECONNREFUSED');
+      fluentd(function(err, proc){
+        s.emit('2nd record', '2nd data');
+        s.end('last record', 'last data', function(){
+          proc.kill();
+          proc.on('exit', function(exitCode){
+            var data = proc.receivedData;
+            expect(data[0].tag).to.be.equal('debug.1st record');
+            expect(data[0].data).to.be.equal('1st data');
+            expect(data[1].tag).to.be.equal('debug.2nd record');
+            expect(data[1].data).to.be.equal('2nd data');
+            expect(data[2].tag).to.be.equal('debug.last record');
+            expect(data[2].data).to.be.equal('last data');
+            done();
+          });
+        });
+      });
+    });
+
   });
 });
