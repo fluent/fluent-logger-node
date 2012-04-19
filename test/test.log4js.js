@@ -5,12 +5,6 @@ var fluentd = require('../lib/testHelper').fluentd;
 
 log4js.restoreConsole();
 describe("log4js", function(){
-  before(function(done){
-    fluentd(function(err, fluentd){
-      done();
-    });
-  });
-
   describe('name', function(){
     it('should be "fluent"', function(done){
       expect(log4jsSupport.name).to.be.equal('fluent');
@@ -22,24 +16,28 @@ describe("log4js", function(){
     var appender = null;
     before(function(done){
       log4js.clearAppenders();
-      appender = log4jsSupport.appender('test-log4js');
-      log4js.addAppender(appender);
       done();
     });
 
-    after(function(done){
-      appender.sender.end();
-      done();
-    });
-
-    it('should', function(done){
-      var logger = log4js.getLogger();
-      logger.info('foobar');
-      // FIXME
-      setTimeout(function(){
-        done();
-      }, 1000);
+    it('should send log records', function(done){
+      fluentd(function(port, finish){
+        var appender = log4jsSupport.appender('debug', {port: port});
+        log4js.addAppender(appender);
+        var logger = log4js.getLogger('mycategory');
+        logger.info('foo %s', 'bar');
+        setTimeout(function(){
+          finish(function(data){
+            expect(data[0].tag).to.be.equal('debug.INFO');
+            expect(data[0].data).exist;
+            expect(data[0].data.data).to.be.equal('foo bar');
+            expect(data[0].data.category).to.be.equal('mycategory');
+            expect(data[0].data.timestamp).exist;
+            expect(data[0].data.levelInt).exist;
+            expect(data[0].data.levelStr).to.be.equal('INFO');
+            done();
+          });
+        }, 1000);
+      });
     });
   });
-
 });

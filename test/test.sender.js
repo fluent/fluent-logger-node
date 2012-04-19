@@ -4,10 +4,9 @@ var fluentd = require('../lib/testHelper').fluentd;
 var async = require('async');
 
 describe("FluentSender", function(){
-
   it('shoud send records', function(done){
-    fluentd(function(err, proc){
-      var s1 = new sender.FluentSender('debug');
+    fluentd(function(port, finish){
+      var s1 = new sender.FluentSender('debug', { port: port });
       var emits = [];
       for(var i=0; i<10; i++){
         (function(k){
@@ -15,10 +14,7 @@ describe("FluentSender", function(){
         })(i);
       }
       emits.push(function(){
-        proc.kill("SIGTERM");
-        proc.on('exit', function(exitCode){
-          expect(exitCode).to.be.equal(0);
-          var data = proc.receivedData;
+        finish(function(data){
           expect(data.length).to.be.equal(10);
           for(var i=0; i<10; i++){
             expect(data[i].tag).to.be.equal("debug.record");
@@ -45,14 +41,12 @@ describe("FluentSender", function(){
 
 
   it('should assure the sequence.', function(done){
-    fluentd(function(err, proc){
-      var s = new sender.FluentSender('debug');
+    fluentd(function(port, finish){
+      var s = new sender.FluentSender('debug', {port: port});
       s.emit('1st record', '1st data');
       s.emit('2nd record', '2nd data');
       s.end('last record', 'last data', function(){
-        proc.kill();
-        proc.on('exit', function(exitCode){
-          var data = proc.receivedData;
+        finish(function(data){
           expect(data[0].tag).to.be.equal('debug.1st record');
           expect(data[0].data).to.be.equal('1st data');
           expect(data[1].tag).to.be.equal('debug.2nd record');
@@ -70,12 +64,11 @@ describe("FluentSender", function(){
     s.emit('1st record', '1st data');
     s.on('error', function(err){
       expect(err.code).to.be.equal('ECONNREFUSED');
-      fluentd(function(err, proc){
+      fluentd(function(port, finish){
+        s.port = port;
         s.emit('2nd record', '2nd data');
         s.end('last record', 'last data', function(){
-          proc.kill();
-          proc.on('exit', function(exitCode){
-            var data = proc.receivedData;
+          finish(function(data){
             expect(data[0].tag).to.be.equal('debug.1st record');
             expect(data[0].data).to.be.equal('1st data');
             expect(data[1].tag).to.be.equal('debug.2nd record');
@@ -87,6 +80,5 @@ describe("FluentSender", function(){
         });
       });
     });
-
-  });
+   });
 });
