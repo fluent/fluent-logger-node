@@ -60,6 +60,20 @@ describe("FluentSender", function(){
     });
   });
 
+  it('should allow to emit with a custom timestamp', function(done){
+    runServer(function(server, finish){
+      var s = new sender.FluentSender('debug', {port: server.port});
+      var timestamp = new Date().getTime() / 1000;
+
+      s.emit("1st record", "1st data", timestamp, function() {
+        finish(function(data) {
+          expect(data[0].time).to.be.equal(timestamp);
+          done();
+        });
+      });
+    });
+  });
+
   it('should resume the connection automatically and flush the queue', function(done){
     var s = new sender.FluentSender('debug');
     s.emit('1st record', '1st data');
