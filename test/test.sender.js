@@ -1,17 +1,18 @@
 var expect = require('chai').expect;
 var sender = require('../lib/sender');
-var fluentd = require('../lib/testHelper').fluentd;
+var runServer = require('../lib/testHelper').runServer;
 var async = require('async');
 
 describe("FluentSender", function(){
-  it('shoud send records', function(done){
-    fluentd(function(port, finish){
-      var s1 = new sender.FluentSender('debug', { port: port });
+  it('should send records', function(done){
+    runServer(function(server, finish){
+      var s1 = new sender.FluentSender('debug', { port: server.port });
       var emits = [];
+      function emit(k){
+        emits.push(function(done){ s1.emit('record', k, done); });
+      }
       for(var i=0; i<10; i++){
-        (function(k){
-          emits.push(function(done){ s1.emit('record', k, done); });
-        })(i);
+        emit(i);
       }
       emits.push(function(){
         finish(function(data){
@@ -41,8 +42,8 @@ describe("FluentSender", function(){
 
 
   it('should assure the sequence.', function(done){
-    fluentd(function(port, finish){
-      var s = new sender.FluentSender('debug', {port: port});
+    runServer(function(server, finish){
+      var s = new sender.FluentSender('debug', {port: server.port});
       s.emit('1st record', '1st data');
       s.emit('2nd record', '2nd data');
       s.end('last record', 'last data', function(){
@@ -64,8 +65,8 @@ describe("FluentSender", function(){
     s.emit('1st record', '1st data');
     s.on('error', function(err){
       expect(err.code).to.be.equal('ECONNREFUSED');
-      fluentd(function(port, finish){
-        s.port = port;
+      runServer(function(server, finish){
+        s.port = server.port;
         s.emit('2nd record', '2nd data');
         s.end('last record', 'last data', function(){
           finish(function(data){
@@ -80,5 +81,5 @@ describe("FluentSender", function(){
         });
       });
     });
-   });
+  });
 });
