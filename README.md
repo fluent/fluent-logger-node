@@ -2,6 +2,8 @@
 
 fluent-logger implementation for node.js inspired by [fluent-logger-python].
 
+[![Build Status](https://secure.travis-ci.org/yssk22/fluent-logger-node.png?branch=master,develop)](http://travis-ci.org/yssk22/fluent-logger-node)
+
 ## Install
 
     $ npm install fluent-logger
