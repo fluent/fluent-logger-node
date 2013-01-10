@@ -14,12 +14,14 @@
         "type": "git",
         "url": "http://github.com/yssk22/fluent-logger-node"
     },
+    "dependencies": {
+        "msgpack": ""
+    },
     "devDependencies": {
         "mocha": "",
         "chai": "",
         "log4js": "",
-        "async": "",
-        "msgpack": ""
+        "async": ""
     },
     "keywords": ["logger", "fluent"]
 }
