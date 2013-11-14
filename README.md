@@ -16,6 +16,8 @@ Fluent daemon should listen on TCP port.
 
 ### Send an event record to fluentd
 
+Singleton style
+
     var logger = require('fluent-logger')
     // The 2nd argument can be omitted. Here is a defualt value for options.
     logger.configure('tag', {
@@ -26,6 +28,15 @@ Fluent daemon should listen on TCP port.
    
     // send an event record with 'tag.label'
     logger.emit('label', {record: 'this is a log'});
+    
+Instance style
+
+    var logger = require('fluent-logger').createFluentSender('tag', {
+       host: 'localhost',  
+       port: 24224,
+       timeout: 3.0
+    });
+   
 
 ## Logging Library Support
 
