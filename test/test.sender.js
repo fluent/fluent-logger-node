@@ -178,9 +178,55 @@ describe("FluentSender", function(){
         data: { bar: 1 },
         time: 12345
       }
+    },
+
+    {
+      name: 'record',
+      args: [{ bar: 1 }],
+      expect: {
+        tag: 'debug',
+        data: { bar: 1 }
+      }
+    },
+
+    {
+      name: 'record and time',
+      args: [{ bar: 1 }, 12345],
+      expect: {
+        tag: 'debug',
+        data: { bar: 1 },
+        time: 12345
+      }
+    },
+
+    {
+      name: 'record and callback',
+      args: [{ bar: 1 }, function cb(){ cb.called = true; }],
+      expect: {
+        tag: 'debug',
+        data: { bar: 1 }
+      }
+    },
+
+    {
+      name: 'record, time and callback',
+      args: [{ bar: 1 }, 12345, function cb(){ cb.called = true; }],
+      expect: {
+        tag: 'debug',
+        data: { bar: 1 },
+        time: 12345
+      }
+    },
+
+    {
+      name: 'record and date object',
+      args: [{ bar: 1 }, new Date(1384434467952)],
+      expect: {
+        tag: 'debug',
+        data: { bar: 1 },
+        time: 1384434467.952
+      }
     }
-
-
   ].forEach(function(testCase) {
     it('should send records with '+testCase.name+' arguments', function(done){
       runServer(function(server, finish){
