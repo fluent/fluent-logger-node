@@ -23,5 +23,9 @@
         "log4js": "",
         "async": ""
     },
+    "licenses": [{
+        "type" : "Apache",
+        "url"  : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }],
     "keywords": ["logger", "fluent"]
 }
