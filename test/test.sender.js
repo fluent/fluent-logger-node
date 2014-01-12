@@ -253,4 +253,19 @@ describe("FluentSender", function(){
     });
   });
 
+
+  // Internal behavior test.
+  it('should not flush queue if existing connection is unavailable.', function(done){
+    runServer(function(server, finish){
+      var s = new sender.FluentSender('debug', {port: server.port});
+      s.emit('1st record', '1st data', function(){
+        s._socket.destroy();
+        s.emit('2nd record', '2nd data', function(){
+          done();
+        });
+      });
+    });
+  });
+
+
 });
