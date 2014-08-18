@@ -114,12 +114,15 @@ describe("FluentSender", function(){
   it('should reconnect when fluentd close the client socket suddenly', function(done){
     runServer(function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
+      s.on('error', function () {
+        return undefined; // Have to listen to this error, else it's thrown as "not listened to".
+      });
       s.emit('foo', 'bar', function(){
         // connected.
         server.close(function(){
           // waiting for the server closing all client socket.
           (function waitForUnwritable(){
-            if( !s._socket.writable ){
+            if( !s._socket ){
               runServer(function(_server2, finish){
                 s.port = _server2.port;   // in actuall case, s.port does not need to be updated.
                 s.emit('bar', 'hoge', function(){
