@@ -46,10 +46,10 @@ describe("FluentSender", function(){
 
       s.emit("1st record", "1st data");
       s.emit("2nd record", "2nd data");
-      setTimeout(function () {
+      setTimeout(function (){
         s.emit("3rd record", "3rd data");
         s.emit("4th record", "4th data");
-        finish(function (messages) {
+        finish(function (messages){
           expect(messages[0].data).to.be.equal("1st data");
           expect(messages[1].data).to.be.equal("2nd data");
           expect(messages[2].data).to.be.equal("3rd data");
