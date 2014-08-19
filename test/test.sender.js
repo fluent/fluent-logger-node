@@ -142,7 +142,7 @@ describe("FluentSender", function(){
         server.close(function(){
           // waiting for the server closing all client socket.
           (function waitForUnwritable(){
-            if( !s._socket ){
+            if( !s._socket || !s._socket.writable ){
               runServer(function(_server2, finish){
                 s.port = _server2.port;   // in actuall case, s.port does not need to be updated.
                 s.emit('bar', 'hoge', function(){
