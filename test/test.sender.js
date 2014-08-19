@@ -42,7 +42,7 @@ describe("FluentSender", function(){
 
   it('should continue to send requests after the queue has cleared', function(done){
     runServer(function(server, finish){
-      var s = new sender.FluentSender('debug', {port: server.port});
+      var s = new sender.FluentSender('debug', {port: server.port, timeout: 50});
 
       s.emit("1st record", "1st data");
       s.emit("2nd record", "2nd data");
@@ -56,7 +56,7 @@ describe("FluentSender", function(){
           expect(messages[3].data).to.be.equal("4th data");
           done();
         });
-      }, 100);
+      }, 200);
     });
   });
 
