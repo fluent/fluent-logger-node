@@ -1,6 +1,7 @@
-# fluent-logger for node.js
 
-fluent-logger implementation for node.js inspired by [fluent-logger-python].
+# fluent-logger for Node.js
+
+fluent-logger implementation for Node.js inspired by [fluent-logger-python].
 
 [![Build Status](https://secure.travis-ci.org/fluent/fluent-logger-node.png?branch=master,develop)](http://travis-ci.org/fluent/fluent-logger-node)
 
@@ -14,7 +15,7 @@ Fluent daemon should listen on TCP port.
 
 ## Usage
 
-### Send an event record to fluentd
+### Send an event record to Fluentd
 
 Singleton style
 
@@ -49,7 +50,7 @@ appended to the configured tag.
 
 ### log4js
 
-Befre using [log4js] support, you should install it IN YOUR APPLICATION.
+Before using [log4js] support, you should install it IN YOUR APPLICATION.
 
 
     var log4js = require('log4js');
