@@ -3,7 +3,7 @@
     "version": "0.2.6",
     "main": "./lib/index.js",
     "scripts": {
-        "test": "./node_modules/.bin/mocha -t 10000 --recursive"
+        "test": "./node_modules/.bin/mocha -t 15000 --recursive"
     },
     "author": {
         "name": "Yohei Sasaki",

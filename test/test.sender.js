@@ -33,11 +33,31 @@ describe("FluentSender", function(){
       host: 'localhost',
       port: 65535
     });
-    s.on('error', function(err){
+    s.once('error', function(err){
       expect(err.code).to.be.equal('ECONNREFUSED');
       done();
     });
     s.emit('test connection error', 'foobar');
+  });
+
+  it('should continue to send requests after the queue has cleared', function(done){
+    runServer(function(server, finish){
+      var s = new sender.FluentSender('debug', {port: server.port, timeout: 50});
+
+      s.emit("1st record", "1st data");
+      s.emit("2nd record", "2nd data");
+      setTimeout(function (){
+        s.emit("3rd record", "3rd data");
+        s.emit("4th record", "4th data");
+        finish(function (messages){
+          expect(messages[0].data).to.be.equal("1st data");
+          expect(messages[1].data).to.be.equal("2nd data");
+          expect(messages[2].data).to.be.equal("3rd data");
+          expect(messages[3].data).to.be.equal("4th data");
+          done();
+        });
+      }, 200);
+    });
   });
 
 
@@ -114,12 +134,15 @@ describe("FluentSender", function(){
   it('should reconnect when fluentd close the client socket suddenly', function(done){
     runServer(function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
+      s.on('error', function () {
+        return undefined; // Have to listen to this error, else it's thrown as "not listened to".
+      });
       s.emit('foo', 'bar', function(){
         // connected.
         server.close(function(){
           // waiting for the server closing all client socket.
           (function waitForUnwritable(){
-            if( !s._socket.writable ){
+            if( !s._socket || !s._socket.writable ){
               runServer(function(_server2, finish){
                 s.port = _server2.port;   // in actuall case, s.port does not need to be updated.
                 s.emit('bar', 'hoge', function(){
