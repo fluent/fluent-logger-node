@@ -24,7 +24,8 @@ Singleton style
     logger.configure('tag', {
        host: 'localhost',  
        port: 24224,
-       timeout: 3.0
+       timeout: 3.0,
+       reconnectInterval: 600000
     });
    
     // send an event record with 'tag.label'
