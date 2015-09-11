@@ -115,11 +115,17 @@ describe("FluentSender", function(){
     runServer(function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
       s.emit('foo', 'bar', function(){
-        // connected.
+
+        // capture ECONNRESET when closing server
+        s.on('error', function(err){
+          if (err.code === 'ECONNRESET') return;
+          throw err;
+        });
+
         server.close(function(){
           // waiting for the server closing all client socket.
           (function waitForUnwritable(){
-            if( !s._socket.writable ){
+            if( !(s._socket && s._socket.writable) ){
               runServer(function(_server2, finish){
                 s.port = _server2.port;   // in actuall case, s.port does not need to be updated.
                 s.emit('bar', 'hoge', function(){
@@ -252,7 +258,6 @@ describe("FluentSender", function(){
       });
     });
   });
-
 
   // Internal behavior test.
   it('should not flush queue if existing connection is unavailable.', function(done){
