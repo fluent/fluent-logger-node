@@ -1,31 +1,36 @@
 {
-    "name": "fluent-logger",
-    "version": "0.2.6",
-    "main": "./lib/index.js",
-    "scripts": {
-        "test": "./node_modules/.bin/mocha -t 10000 --recursive"
-    },
-    "author": {
-        "name": "Yohei Sasaki",
-        "email": "yssk22@gmail.com",
-        "url": "http://github.com/yssk22"
-    },
-    "repository": {
-        "type": "git",
-        "url": "http://github.com/fluent/fluent-logger-node"
-    },
-    "dependencies": {
-        "msgpack5": "^3.1.0"
-    },
-    "devDependencies": {
-        "mocha": "",
-        "chai": "",
-        "log4js": "",
-        "async": ""
-    },
-    "licenses": [{
-        "type" : "Apache",
-        "url"  : "http://www.apache.org/licenses/LICENSE-2.0.html"
-    }],
-    "keywords": ["logger", "fluent"]
+  "name": "fluent-logger",
+  "version": "0.2.6",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "./node_modules/.bin/mocha -t 10000 --recursive"
+  },
+  "author": {
+    "name": "Yohei Sasaki",
+    "email": "yssk22@gmail.com",
+    "url": "http://github.com/yssk22"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/fluent/fluent-logger-node"
+  },
+  "dependencies": {
+    "msgpack5": "^3.1.0"
+  },
+  "devDependencies": {
+    "mocha": "",
+    "chai": "",
+    "log4js": "",
+    "async": ""
+  },
+  "licenses": [
+    {
+      "type": "Apache",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  ],
+  "keywords": [
+    "logger",
+    "fluent"
+  ]
 }
