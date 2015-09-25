@@ -12,12 +12,15 @@
     },
     "contributors": [{
         "name":  "Eduardo Silva",
-        "email": "eduardo@treasure-data.com"
+        "email": "eduardo@treasure-data.com",
         "url": "http://edsiper.linuxchile.cl"
     }],
     "repository": {
         "type": "git",
         "url": "http://github.com/fluent/fluent-logger-node"
+    },
+    "engines": {
+        "node" : ">=0.10.30 < 4"
     },
     "dependencies": {
         "msgpack": "0.2.7",
