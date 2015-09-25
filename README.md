@@ -1,4 +1,3 @@
-
 # fluent-logger for Node.js
 
 fluent-logger implementation for Node.js inspired by [fluent-logger-python].
@@ -8,7 +7,7 @@ fluent-logger implementation for Node.js inspired by [fluent-logger-python].
 ## Install
 
     $ npm install fluent-logger
-    
+
 ## Prerequistes
 
 Fluent daemon should listen on TCP port.
@@ -22,22 +21,22 @@ Singleton style
     var logger = require('fluent-logger')
     // The 2nd argument can be omitted. Here is a defualt value for options.
     logger.configure('tag', {
-       host: 'localhost',  
+       host: 'localhost',
        port: 24224,
        timeout: 3.0
     });
-   
+
     // send an event record with 'tag.label'
     logger.emit('label', {record: 'this is a log'});
-    
+
 Instance style
 
     var logger = require('fluent-logger').createFluentSender('tag', {
-       host: 'localhost',  
+       host: 'localhost',
        port: 24224,
        timeout: 3.0
     });
-   
+
 
 The emit method has following signature
 
@@ -59,7 +58,7 @@ Before using [log4js] support, you should install it IN YOUR APPLICATION.
        port: 24224,
        timeout: 3.0
     }));
-    
+
     var logger = log4js.getLogger('foo');
     logger.info('this log record is sent to fluent daemon');
 
@@ -69,3 +68,7 @@ Apache License, Version 2.0.
 
 [fluent-logger-python]: https://github.com/fluent/fluent-logger-python
 
+
+## Abour NodeJS versions
+
+This package is compatible with NodeJS versions < 4.0. If you are using newer versions of NodeJS (e.g: 4.1), please checkout the branch [nodejs-4](https://github.com/fluent/fluent-logger-node/tree/nodejs-4).
