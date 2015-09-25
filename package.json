@@ -20,6 +20,7 @@
         "url": "http://github.com/fluent/fluent-logger-node"
     },
     "dependencies": {
+        "msgpack": "0.2.7",
         "msgpack5": "^3.1.0"
     },
     "devDependencies": {
