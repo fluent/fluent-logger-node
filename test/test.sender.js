@@ -115,13 +115,7 @@ describe("FluentSender", function(){
     runServer(function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
       s.emit('foo', 'bar', function(){
-
-        // capture ECONNRESET when closing server
-        s.on('error', function(err){
-          if (err.code === 'ECONNRESET') return;
-          throw err;
-        });
-
+        // connected
         server.close(function(){
           // waiting for the server closing all client socket.
           (function waitForUnwritable(){
