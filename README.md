@@ -71,4 +71,4 @@ Apache License, Version 2.0.
 
 ## Abour NodeJS versions
 
-This package is compatible with NodeJS versions < 4.0. If you are using newer versions of NodeJS (e.g: 4.1), please checkout the branch [nodejs-4](https://github.com/fluent/fluent-logger-node/tree/nodejs-4).
+This package is compatible with NodeJS versions > 0.10.
