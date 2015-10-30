@@ -22,7 +22,7 @@
     "url": "http://github.com/fluent/fluent-logger-node"
   },
   "engines": {
-    "node": ">=0.12.0"
+    "node": ">=0.10.30"
   },
   "dependencies": {
     "msgpack-lite": "*"
