@@ -26,6 +26,11 @@ Singleton style
        timeout: 3.0
     });
 
+    // Handling errors in fluentd connection
+    logger.on('err', function(e){      
+      console.log(e);
+    })
+
     // send an event record with 'tag.label'
     logger.emit('label', {record: 'this is a log'});
 

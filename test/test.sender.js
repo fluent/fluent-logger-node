@@ -33,7 +33,7 @@ describe("FluentSender", function(){
       host: 'localhost',
       port: 65535
     });
-    s.on('error', function(err){
+    s.on('err', function(err){
       expect(err.code).to.be.equal('ECONNREFUSED');
       done();
     });
@@ -91,7 +91,7 @@ describe("FluentSender", function(){
   it('should resume the connection automatically and flush the queue', function(done){
     var s = new sender.FluentSender('debug');
     s.emit('1st record', '1st data');
-    s.on('error', function(err){
+    s.on('err', function(err){
       expect(err.code).to.be.equal('ECONNREFUSED');
       runServer(function(server, finish){
         s.port = server.port;
