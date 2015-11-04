@@ -55,5 +55,24 @@ describe("log4js", function(){
         }, 1000);
       });
     });
+
+    it('should listen error event when fluentd is down', function(done){
+      runServer(function(server, finish){
+        var appender = log4jsSupport.appender('debug', {port: server.port});
+        appender.on('error', function(err) {
+          expect(err.code).to.be.equal('ECONNREFUSED');
+          done();
+        });
+        log4js.addAppender(appender);
+        var logger = log4js.getLogger('mycategory');
+        logger.info('foo %s', 'bar');
+        setTimeout(function(){
+          finish(function(data){
+            expect(data[0].tag).to.be.equal('debug.INFO');
+            logger.info('foo %s', 'bar');
+          });
+        }, 1000);
+      });
+    });
   });
 });
