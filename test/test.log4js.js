@@ -39,5 +39,21 @@ describe("log4js", function(){
         }, 1000);
       });
     });
+
+    it('should not crash when fluentd is not running', function(done){
+      runServer(function(server, finish){
+        var appender = log4jsSupport.appender('debug', {port: server.port});
+        log4js.addAppender(appender);
+        var logger = log4js.getLogger('mycategory');
+        logger.info('foo %s', 'bar');
+        setTimeout(function(){
+          finish(function(data){
+            expect(data[0].tag).to.be.equal('debug.INFO');
+            logger.info('foo %s', 'bar');
+            done();
+          });
+        }, 1000);
+      });
+    });
   });
 });
