@@ -62,6 +62,21 @@ Before using [log4js] support, you should install it IN YOUR APPLICATION.
     var logger = log4js.getLogger('foo');
     logger.info('this log record is sent to fluent daemon');
 
+You can handle inner events such as 'error' it is raised when fluentd
+is down.
+
+    var log4js = require('log4js');
+    var appender = require('fluent-logger').support.log4jsAppender('mytag', {
+      host: 'localhost',
+      port: 24224,
+      timeout: 3.0
+    });
+    appender.on('error', function(err) {
+      // Handle err object
+      console.log(err);
+    });
+    log4js.addAppender(appender);
+
 ## License
 
 Apache License, Version 2.0.
