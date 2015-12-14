@@ -2,6 +2,7 @@ var expect = require('chai').expect;
 var log4jsSupport = require('../lib/log4js');
 var log4js = require('log4js');
 var runServer = require('../lib/testHelper').runServer;
+var EventEmitter = require('events').EventEmitter;
 
 log4js.restoreConsole();
 describe("log4js", function(){
@@ -77,9 +78,15 @@ describe("log4js", function(){
 
     it('should set max listeners', function(done) {
       var appender = log4jsSupport.appender('debug');
-      expect(appender.getMaxListeners()).to.be.equal(10);
+      if (EventEmitter.prototype.getMaxListeners) {
+        expect(appender.getMaxListeners()).to.be.equal(10);
+      }
       appender.setMaxListeners(100);
-      expect(appender.getMaxListeners()).to.be.equal(100);
+      if (EventEmitter.prototype.getMaxListeners) {
+        expect(appender.getMaxListeners()).to.be.equal(100);
+      } else {
+        expect(appender._eventEmitter._maxListeners).to.be.equal(100);
+      }
       done();
     });
   });

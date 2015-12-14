@@ -2,6 +2,7 @@ var expect = require('chai').expect;
 var sender = require('../lib/sender');
 var runServer = require('../lib/testHelper').runServer;
 var async = require('async');
+var EventEmitter = require('events').EventEmitter;
 
 describe("FluentSender", function(){
   it('should send records', function(done){
@@ -255,9 +256,15 @@ describe("FluentSender", function(){
 
   it('should set max listeners', function(done){
     var s = new sender.FluentSender('debug');
-    expect(s.getMaxListeners()).to.be.equal(10);
+    if (EventEmitter.prototype.getMaxListeners) {
+      expect(s.getMaxListeners()).to.be.equal(10);
+    }
     s.setMaxListeners(100);
-    expect(s.getMaxListeners()).to.be.equal(100);
+    if (EventEmitter.prototype.getMaxListeners) {
+      expect(s.getMaxListeners()).to.be.equal(100);
+    } else {
+      expect(s._eventEmitter._maxListeners).to.be.equal(100);
+    }
     done();
   });
 
