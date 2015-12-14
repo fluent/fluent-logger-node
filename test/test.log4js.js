@@ -74,5 +74,15 @@ describe("log4js", function(){
         }, 1000);
       });
     });
+
+    it('should set max listeners', function(done) {
+      var appender = log4jsSupport.appender('debug');
+      log4js.addAppender(appender);
+      var logger = log4js.getLogger('mycategory');
+      expect(logger.getMaxListeners()).to.be.equal(10);
+      logger.setMaxListeners(100);
+      expect(logger.getMaxListeners()).to.be.equal(100);
+      done();
+    });
   });
 });

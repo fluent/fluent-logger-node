@@ -253,6 +253,14 @@ describe("FluentSender", function(){
     });
   });
 
+  it('should set max listeners', function(done){
+    var s = new sender.FluentSender('debug');
+    expect(s.getMaxListeners()).to.be.equal(10);
+    s.setMaxListeners(100);
+    expect(s.getMaxListeners()).to.be.equal(100);
+    done();
+  });
+
   // Internal behavior test.
   it('should not flush queue if existing connection is unavailable.', function(done){
     runServer(function(server, finish){
