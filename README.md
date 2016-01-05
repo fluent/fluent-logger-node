@@ -23,7 +23,8 @@ Singleton style
     logger.configure('tag', {
        host: 'localhost',
        port: 24224,
-       timeout: 3.0
+       timeout: 3.0,
+       reconnectInterval: 600000 // 10 minutes
     });
 
     // send an event record with 'tag.label'
@@ -34,7 +35,8 @@ Instance style
     var logger = require('fluent-logger').createFluentSender('tag', {
        host: 'localhost',
        port: 24224,
-       timeout: 3.0
+       timeout: 3.0,
+       reconnectInterval: 600000 // 10 minutes
     });
 
 
