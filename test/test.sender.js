@@ -142,6 +142,16 @@ describe("FluentSender", function(){
     });
   });
 
+  it('should set error handler', function(done){
+    var s = new sender.FluentSender('debug', {
+      reconnectInterval: 100
+    });
+    expect(s._eventEmitter.listeners('error').length).to.be.equal(0);
+    s._setupErrorHandler();
+    expect(s._eventEmitter.listeners('error').length).to.be.equal(1);
+    done();
+  });
+
   [
     {
       name: 'tag and record',
