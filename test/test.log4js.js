@@ -41,6 +41,27 @@ describe("log4js", function(){
       });
     });
 
+    it('should not add levelTag', function(done){
+      runServer(function(server, finish){
+        var appender = log4jsSupport.appender('debug', {port: server.port, levelTag:false});
+        log4js.addAppender(appender);
+        var logger = log4js.getLogger('mycategory');
+        logger.info('foo %s', 'bar');
+        setTimeout(function(){
+          finish(function(data){
+            expect(data[0].tag).to.be.equal('debug');
+            expect(data[0].data).exist;
+            expect(data[0].data.data).to.be.equal('foo bar');
+            expect(data[0].data.category).to.be.equal('mycategory');
+            expect(data[0].data.timestamp).exist;
+            expect(data[0].data.levelInt).exist;
+            expect(data[0].data.levelStr).to.be.equal('INFO');
+            done();
+          });
+        }, 1000);
+      });
+    });
+
     it('should not crash when fluentd is not running', function(done){
       runServer(function(server, finish){
         var appender = log4jsSupport.appender('debug', {port: server.port});
