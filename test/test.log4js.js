@@ -89,5 +89,13 @@ describe("log4js", function(){
       }
       done();
     });
+
+    it('should set error handler', function(done) {
+      var appender = log4jsSupport.appender('debug');
+      expect(appender._eventEmitter.listeners('error').length).to.be.equal(0);
+      appender._setupErrorHandler();
+      expect(appender._eventEmitter.listeners('error').length).to.be.equal(1);
+      done();
+    });
   });
 });
