@@ -94,6 +94,50 @@ is down.
     });
     log4js.addAppender(appender);
 
+## Options
+
+**tag**
+
+The tag string.
+
+**host**
+
+The hostname. Default value = 'localhost'.
+
+See [socket.connect][1]
+
+**port**
+
+The port to listen to. Default value = 24224.
+
+See [socket.connect][1]
+
+**path**
+
+The path to your Unix Domain Socket.
+If you set `path` then fluent-logger ignores `host` and `port`.
+
+See [socket.connect][1]
+
+**timeout**
+
+Set the socket to timetout after `timeout` milliseconds of inactivity
+on the socket.
+
+See [socket.setTimeout][2]
+
+**reconnectInterval**
+
+Set the reconnect interval in milliseconds.
+If error occurs then reconnect after this interval.
+
+**verbose**
+
+If set `true`, verbose output.
+
+[1]: https://nodejs.org/api/net.html#net_socket_connect_path_connectlistener
+[2]: https://nodejs.org/api/net.html#net_socket_settimeout_timeout_callback
+
 ## License
 
 Apache License, Version 2.0.
