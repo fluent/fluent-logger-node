@@ -12,6 +12,17 @@ fluent-logger implementation for Node.js inspired by [fluent-logger-python].
 
 Fluent daemon should listen on TCP port.
 
+Simple configuration is following:
+
+    <source>
+      @type forward
+      port 24224
+    </source>
+
+    <match **.*>
+      @type stdout
+    </match>
+
 ## Usage
 
 ### Send an event record to Fluentd
