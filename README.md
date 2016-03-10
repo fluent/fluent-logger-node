@@ -53,7 +53,9 @@ Instance style
 
 The emit method has following signature
 
-   .emit([label string], <record object>, [timestamp number/date], [callback function])
+```js
+.emit([label string], <record object>, [timestamp number/date], [callback function])
+```
 
 Where only the `record` argument is required. If the label is set it will be
 appended to the configured tag.
