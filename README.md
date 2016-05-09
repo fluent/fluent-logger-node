@@ -30,7 +30,7 @@ Simple configuration is following:
 Singleton style
 
     var logger = require('fluent-logger')
-    // The 2nd argument can be omitted. Here is a defualt value for options.
+    // The 2nd argument can be omitted. Here is a default value for options.
     logger.configure('tag', {
        host: 'localhost',
        port: 24224,
@@ -143,10 +143,6 @@ See [socket.setTimeout][2]
 
 Set the reconnect interval in milliseconds.
 If error occurs then reconnect after this interval.
-
-**verbose**
-
-If set `true`, verbose output.
 
 [1]: https://nodejs.org/api/net.html#net_socket_connect_path_connectlistener
 [2]: https://nodejs.org/api/net.html#net_socket_settimeout_timeout_callback

@@ -64,11 +64,12 @@ describe("FluentSender", function(){
   it('should allow to emit with a custom timestamp', function(done){
     runServer(function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
-      var timestamp = new Date();
+      var timestamp = new Date(2222, 12, 04);
+      var timestamp_seconds_since_epoch = Math.floor(timestamp.getTime() / 1000);
 
       s.emit("1st record", "1st data", timestamp, function() {
         finish(function(data) {
-          expect(data[0].time).to.be.equal(timestamp.getTime() / 1000);
+          expect(data[0].time).to.be.equal(timestamp_seconds_since_epoch);
           done();
         });
       });
@@ -78,7 +79,7 @@ describe("FluentSender", function(){
   it('should allow to emit with a custom numeric timestamp', function(done){
     runServer(function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
-      var timestamp = new Date().getTime() / 1000;
+      var timestamp = Math.floor(new Date().getTime() / 1000);
 
       s.emit("1st record", "1st data", timestamp, function() {
         finish(function(data) {
@@ -235,7 +236,7 @@ describe("FluentSender", function(){
       expect: {
         tag: 'debug',
         data: { bar: 1 },
-        time: 1384434467.952
+        time: 1384434467
       }
     }
   ].forEach(function(testCase) {
