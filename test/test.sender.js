@@ -265,6 +265,118 @@ describe("FluentSender", function(){
     });
   });
 
+  [
+    {
+      name: 'tag and record',
+      args: ['foo', { bar: 1 }],
+      expect: {
+        tag: 'foo',
+        data: { bar: 1 }
+      }
+    },
+
+    {
+      name: 'tag, record and time',
+      args: ['foo', { bar: 1 }, 12345],
+      expect: {
+        tag: 'foo',
+        data: { bar: 1 },
+        time: 12345
+      }
+    },
+
+    {
+      name: 'tag, record and callback',
+      args: ['foo', { bar: 1 }, function cb() { cb.called = true; }],
+      expect: {
+        tag: 'foo',
+        data: { bar: 1 },
+      }
+    },
+
+    {
+      name: 'tag, record, time and callback',
+      args: ['foo', { bar: 1 }, 12345, function cb() { cb.called = true; }],
+      expect: {
+        tag: 'foo',
+        data: { bar: 1 },
+        time: 12345
+      }
+    },
+
+    {
+      name: 'record',
+      args: [{ bar: 1 }],
+      expect: {
+        tag: null,
+        data: { bar: 1 }
+      }
+    },
+
+    {
+      name: 'record and time',
+      args: [{ bar: 1 }, 12345],
+      expect: {
+        tag: null,
+        data: { bar: 1 },
+        time: 12345
+      }
+    },
+
+    {
+      name: 'record and callback',
+      args: [{ bar: 1 }, function cb(){ cb.called = true; }],
+      expect: {
+        tag: null,
+        data: { bar: 1 }
+      }
+    },
+
+    {
+      name: 'record, time and callback',
+      args: [{ bar: 1 }, 12345, function cb(){ cb.called = true; }],
+      expect: {
+        tag: null,
+        data: { bar: 1 },
+        time: 12345
+      }
+    },
+
+    {
+      name: 'record and date object',
+      args: [{ bar: 1 }, new Date(1384434467952)],
+      expect: {
+        tag: null,
+        data: { bar: 1 },
+        time: 1384434467
+      }
+    }
+  ].forEach(function(testCase) {
+    it('should send records with '+testCase.name+' arguments without a default tag', function(done){
+      runServer(function(server, finish){
+        var s1 = new sender.FluentSender(null, { port: server.port });
+        s1.emit.apply(s1, testCase.args);
+
+        finish(function(data){
+          expect(data[0].tag).to.be.equal(testCase.expect.tag);
+          expect(data[0].data).to.be.deep.equal(testCase.expect.data);
+          if (testCase.expect.time) {
+            expect(data[0].time).to.be.deep.equal(testCase.expect.time);
+          }
+
+          testCase.args.forEach(function(arg) {
+            if (typeof arg === "function") {
+              expect(arg.called, "callback must be called").to.be.true;
+            }
+          });
+
+          done();
+        });
+
+      });
+    });
+  });
+
   it('should set max listeners', function(done){
     var s = new sender.FluentSender('debug');
     if (EventEmitter.prototype.getMaxListeners) {
