@@ -302,54 +302,6 @@ describe("FluentSender", function(){
         data: { bar: 1 },
         time: 12345
       }
-    },
-
-    {
-      name: 'record',
-      args: [{ bar: 1 }],
-      expect: {
-        tag: null,
-        data: { bar: 1 }
-      }
-    },
-
-    {
-      name: 'record and time',
-      args: [{ bar: 1 }, 12345],
-      expect: {
-        tag: null,
-        data: { bar: 1 },
-        time: 12345
-      }
-    },
-
-    {
-      name: 'record and callback',
-      args: [{ bar: 1 }, function cb(){ cb.called = true; }],
-      expect: {
-        tag: null,
-        data: { bar: 1 }
-      }
-    },
-
-    {
-      name: 'record, time and callback',
-      args: [{ bar: 1 }, 12345, function cb(){ cb.called = true; }],
-      expect: {
-        tag: null,
-        data: { bar: 1 },
-        time: 12345
-      }
-    },
-
-    {
-      name: 'record and date object',
-      args: [{ bar: 1 }, new Date(1384434467952)],
-      expect: {
-        tag: null,
-        data: { bar: 1 },
-        time: 1384434467
-      }
     }
   ].forEach(function(testCase) {
     it('should send records with '+testCase.name+' arguments without a default tag', function(done){
@@ -364,6 +316,52 @@ describe("FluentSender", function(){
             expect(data[0].time).to.be.deep.equal(testCase.expect.time);
           }
 
+          testCase.args.forEach(function(arg) {
+            if (typeof arg === "function") {
+              expect(arg.called, "callback must be called").to.be.true;
+            }
+          });
+
+          done();
+        });
+
+      });
+    });
+  });
+
+  [
+    {
+      name: 'record',
+      args: [{ bar: 1 }]
+    },
+
+    {
+      name: 'record and time',
+      args: [{ bar: 1 }, 12345]
+    },
+
+    {
+      name: 'record and callback',
+      args: [{ bar: 1 }, function cb(){ cb.called = true; }]
+    },
+
+    {
+      name: 'record, time and callback',
+      args: [{ bar: 1 }, 12345, function cb(){ cb.called = true; }]
+    },
+
+    {
+      name: 'record and date object',
+      args: [{ bar: 1 }, new Date(1384434467952)]
+    }
+  ].forEach(function(testCase) {
+    it('should not send records with '+testCase.name+' arguments without a default tag', function(done){
+      runServer(function(server, finish){
+        var s1 = new sender.FluentSender(null, { port: server.port });
+        s1.emit.apply(s1, testCase.args);
+
+        finish(function(data){
+          expect(data.length).to.be.equal(0);
           testCase.args.forEach(function(arg) {
             if (typeof arg === "function") {
               expect(arg.called, "callback must be called").to.be.true;
