@@ -36,7 +36,8 @@
     "mocha": "",
     "chai": "",
     "log4js": "",
-    "async": ""
+    "async": "",
+    "winston": ""
   },
   "licenses": [
     {

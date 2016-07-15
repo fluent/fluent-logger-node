@@ -117,6 +117,26 @@ appender.on('error', function(err) {
 log4js.addAppender(appender);
 ```
 
+### winston
+
+Before using [winston](https://github.com/winstonjs/winston) support, you should install it IN YOUR APPLICATION.
+
+```js
+var winston = require('winston');
+var config = {
+  host: 'localhost',
+  port: 24224,
+  timeout: 3.0
+};
+var fluentTransport = require('fluent-logger').support.winstonTransport();
+var logger = new (winston.Logger)({
+    transports: [new fluentTransport('mytag', config), new (winston.transports.Console)()]
+});
+
+logger.log('info', 'this log record is sent to fluent daemon');
+logger.info('this log record is sent to fluent daemon');
+```
+
 ## Options
 
 **tag**
