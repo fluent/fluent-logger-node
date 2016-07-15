@@ -14,14 +14,16 @@ Fluent daemon should listen on TCP port.
 
 Simple configuration is following:
 
-    <source>
-      @type forward
-      port 24224
-    </source>
+```aconf
+<source>
+  @type forward
+  port 24224
+</source>
 
-    <match **.*>
-      @type stdout
-    </match>
+<match **.*>
+  @type stdout
+</match>
+```
 
 ## Usage
 
@@ -29,27 +31,30 @@ Simple configuration is following:
 
 Singleton style
 
-    var logger = require('fluent-logger')
-    // The 2nd argument can be omitted. Here is a default value for options.
-    logger.configure('tag', {
-       host: 'localhost',
-       port: 24224,
-       timeout: 3.0,
-       reconnectInterval: 600000 // 10 minutes
-    });
+```js
+var logger = require('fluent-logger')
+// The 2nd argument can be omitted. Here is a default value for options.
+logger.configure('tag', {
+   host: 'localhost',
+   port: 24224,
+   timeout: 3.0,
+   reconnectInterval: 600000 // 10 minutes
+});
 
-    // send an event record with 'tag.label'
-    logger.emit('label', {record: 'this is a log'});
+// send an event record with 'tag.label'
+logger.emit('label', {record: 'this is a log'});
+```
 
 Instance style
 
-    var logger = require('fluent-logger').createFluentSender('tag', {
-       host: 'localhost',
-       port: 24224,
-       timeout: 3.0,
-       reconnectInterval: 600000 // 10 minutes
-    });
-
+```js
+var logger = require('fluent-logger').createFluentSender('tag', {
+   host: 'localhost',
+   port: 24224,
+   timeout: 3.0,
+   reconnectInterval: 600000 // 10 minutes
+});
+```
 
 The emit method has following signature
 
@@ -66,46 +71,51 @@ appended to the configured tag.
 
 Before using [log4js] support, you should install it IN YOUR APPLICATION.
 
+```js
+var log4js = require('log4js');
+log4js.addAppender(require('fluent-logger').support.log4jsAppender('mytag', {
+   host: 'localhost',
+   port: 24224,
+   timeout: 3.0
+}));
 
-    var log4js = require('log4js');
-    log4js.addAppender(require('fluent-logger').support.log4jsAppender('mytag', {
-       host: 'localhost',
-       port: 24224,
-       timeout: 3.0
-    }));
-
-    var logger = log4js.getLogger('foo');
-    logger.info('this log record is sent to fluent daemon');
+var logger = log4js.getLogger('foo');
+logger.info('this log record is sent to fluent daemon');
+```
 
 You can add log level after tag automatically.
 
-    var log4js = require('log4js');
-    log4js.addAppender(require('fluent-logger').support.log4jsAppender('mytag', {
-       host: 'localhost',
-       port: 24224,
-       timeout: 3.0,
-       levelTag: true
-    }));
+```js
+var log4js = require('log4js');
+log4js.addAppender(require('fluent-logger').support.log4jsAppender('mytag', {
+   host: 'localhost',
+   port: 24224,
+   timeout: 3.0,
+   levelTag: true
+}));
 
-    var logger = log4js.getLogger('foo');
-    logger.info('this log record is sent to fluent daemon');
+var logger = log4js.getLogger('foo');
+logger.info('this log record is sent to fluent daemon');
+```
 
 If `levelTag` is `true`, tag is "mytag.INFO". If `levelTag` is `false`, tag is "mytag".
 
 You can handle inner events such as 'error' it is raised when fluentd
 is down.
 
-    var log4js = require('log4js');
-    var appender = require('fluent-logger').support.log4jsAppender('mytag', {
-      host: 'localhost',
-      port: 24224,
-      timeout: 3.0
-    });
-    appender.on('error', function(err) {
-      // Handle err object
-      console.log(err);
-    });
-    log4js.addAppender(appender);
+```js
+var log4js = require('log4js');
+var appender = require('fluent-logger').support.log4jsAppender('mytag', {
+  host: 'localhost',
+  port: 24224,
+  timeout: 3.0
+});
+appender.on('error', function(err) {
+  // Handle err object
+  console.log(err);
+});
+log4js.addAppender(appender);
+```
 
 ## Options
 
