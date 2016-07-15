@@ -6,7 +6,7 @@ var runServer = require('../lib/testHelper').runServer;
 describe("winston", function(){
   describe('name', function(){
     it('should be "fluent"', function(done){
-      expect(winstonSupport.name).to.be.equal('fluent');
+      expect((new (winstonSupport.Transport)()).name).to.be.equal('fluent');
       done();
     });
   });
