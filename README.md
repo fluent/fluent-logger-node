@@ -177,6 +177,14 @@ If error occurs then reconnect after this interval.
 [1]: https://nodejs.org/api/net.html#net_socket_connect_path_connectlistener
 [2]: https://nodejs.org/api/net.html#net_socket_settimeout_timeout_callback
 
+**requireAckResponse**
+
+Change the protocol to at-least-once. The logger waits the ack from destination.
+
+**ackResponseTimeout**
+
+This option is used when requireAckResponse is true. The default is 190. This default value is based on popular `tcp_syn_retries`.
+
 ## License
 
 Apache License, Version 2.0.
