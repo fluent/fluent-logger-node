@@ -14,7 +14,7 @@ describe("winston", function(){
   describe('transport', function(){
 
     it('should send log records', function(done){
-      runServer(function(server, finish){
+      runServer({}, function(server, finish){
         var logger = new (winston.Logger)({
           transports: [
             new (winstonSupport.Transport)('debug', {port: server.port})

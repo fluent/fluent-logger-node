@@ -6,7 +6,7 @@ var EventEmitter = require('events').EventEmitter;
 
 describe("FluentSender", function(){
   it('should send records', function(done){
-    runServer(function(server, finish){
+    runServer({}, function(server, finish){
       var s1 = new sender.FluentSender('debug', { port: server.port });
       var emits = [];
       function emit(k){
@@ -43,7 +43,7 @@ describe("FluentSender", function(){
 
 
   it('should assure the sequence.', function(done){
-    runServer(function(server, finish){
+    runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
       s.emit('1st record', '1st data');
       s.emit('2nd record', '2nd data');
@@ -62,7 +62,7 @@ describe("FluentSender", function(){
   });
 
   it('should allow to emit with a custom timestamp', function(done){
-    runServer(function(server, finish){
+    runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
       var timestamp = new Date(2222, 12, 04);
       var timestamp_seconds_since_epoch = Math.floor(timestamp.getTime() / 1000);
@@ -77,7 +77,7 @@ describe("FluentSender", function(){
   });
 
   it('should allow to emit with a custom numeric timestamp', function(done){
-    runServer(function(server, finish){
+    runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
       var timestamp = Math.floor(new Date().getTime() / 1000);
 
@@ -95,7 +95,7 @@ describe("FluentSender", function(){
     s.emit('1st record', '1st data');
     s.on('error', function(err){
       expect(err.code).to.be.equal('ECONNREFUSED');
-      runServer(function(server, finish){
+      runServer({}, function(server, finish){
         s.port = server.port;
         s.emit('2nd record', '2nd data');
         s.end('last record', 'last data', function(){
@@ -114,7 +114,7 @@ describe("FluentSender", function(){
   });
 
   it('should reconnect when fluentd close the client socket suddenly', function(done){
-    runServer(function(server, finish){
+    runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
       s.emit('foo', 'bar', function(){
         // connected
@@ -122,7 +122,7 @@ describe("FluentSender", function(){
           // waiting for the server closing all client socket.
           (function waitForUnwritable(){
             if( !(s._socket && s._socket.writable) ){
-              runServer(function(_server2, finish){
+              runServer({}, function(_server2, finish){
                 s.port = _server2.port;   // in actuall case, s.port does not need to be updated.
                 s.emit('bar', 'hoge', function(){
                   finish(function(data){
@@ -139,6 +139,52 @@ describe("FluentSender", function(){
             }
           })();
         });
+      });
+    });
+  });
+
+  it('should send records with requireAckResponse', function(done) {
+    runServer({requireAckResponse: true}, function(server, finish) {
+      var s1 = new sender.FluentSender('debug', {
+        port: server.port,
+        requireAckResponse: true
+      });
+      var emits = [];
+      function emit(k){
+        emits.push(function(done){ s1.emit('record', k, done); });
+      }
+      for (var i=0; i<10; i++) {
+        emit(i);
+      }
+      emits.push(function(){
+        finish(function(data){
+          expect(data.length).to.be.equal(10);
+          for(var i=0; i<10; i++){
+            expect(data[i].tag).to.be.equal("debug.record");
+            expect(data[i].data).to.be.equal(i);
+            expect(data[i].options.chunk).to.be.equal(server.messages[i].options.chunk);
+          }
+          done();
+        });
+      });
+      async.series(emits);
+    });
+  });
+
+  it('should send records ackResponseTimeout', function(done) {
+    runServer({requireAckResponse: false }, function(server, finish) {
+      var s1 = new sender.FluentSender('debug', {
+        port: server.port,
+        requireAckResponse: false,
+        ackResponseTimeout: 1000
+      });
+      s1.on('response-timeout', function(error) {
+        expect(error).to.be.equal('ack response timeout');
+      });
+      s1.emit('record', 1);
+      finish(function(data) {
+        expect(data.length).to.be.equal(1);
+        done();
       });
     });
   });
@@ -241,7 +287,7 @@ describe("FluentSender", function(){
     }
   ].forEach(function(testCase) {
     it('should send records with '+testCase.name+' arguments', function(done){
-      runServer(function(server, finish){
+      runServer({}, function(server, finish){
         var s1 = new sender.FluentSender('debug', { port: server.port });
         s1.emit.apply(s1, testCase.args);
 
@@ -281,7 +327,7 @@ describe("FluentSender", function(){
 
   // Internal behavior test.
   it('should not flush queue if existing connection is unavailable.', function(done){
-    runServer(function(server, finish){
+    runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
       s.emit('1st record', '1st data', function(){
         s._socket.destroy();

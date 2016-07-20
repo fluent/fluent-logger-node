@@ -21,7 +21,7 @@ describe("log4js", function(){
     });
 
     it('should send log records', function(done){
-      runServer(function(server, finish){
+      runServer({}, function(server, finish){
         var appender = log4jsSupport.appender('debug', {port: server.port});
         log4js.addAppender(appender);
         var logger = log4js.getLogger('mycategory');
@@ -42,7 +42,7 @@ describe("log4js", function(){
     });
 
     it('should not add levelTag', function(done){
-      runServer(function(server, finish){
+      runServer({}, function(server, finish){
         var appender = log4jsSupport.appender('debug', {port: server.port, levelTag:false});
         log4js.addAppender(appender);
         var logger = log4js.getLogger('mycategory');
@@ -63,7 +63,7 @@ describe("log4js", function(){
     });
 
     it('should not crash when fluentd is not running', function(done){
-      runServer(function(server, finish){
+      runServer({}, function(server, finish){
         var appender = log4jsSupport.appender('debug', {port: server.port});
         log4js.addAppender(appender);
         var logger = log4js.getLogger('mycategory');
@@ -79,7 +79,7 @@ describe("log4js", function(){
     });
 
     it('should listen error event when fluentd is down', function(done){
-      runServer(function(server, finish){
+      runServer({}, function(server, finish){
         var appender = log4jsSupport.appender('debug', {port: server.port});
         appender.on('error', function(err) {
           expect(err.code).to.be.equal('ECONNREFUSED');
