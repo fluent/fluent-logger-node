@@ -196,4 +196,4 @@ Apache License, Version 2.0.
 
 ## Abour NodeJS versions
 
-This package is compatible with NodeJS versions > 0.10.
+This package is compatible with NodeJS versions > 4.
