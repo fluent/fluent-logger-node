@@ -34,7 +34,7 @@ Singleton style
 ```js
 var logger = require('fluent-logger')
 // The 2nd argument can be omitted. Here is a default value for options.
-logger.configure('tag', {
+logger.configure('tag_prefix', {
    host: 'localhost',
    port: 24224,
    timeout: 3.0,
@@ -48,7 +48,7 @@ logger.emit('label', {record: 'this is a log'});
 Instance style
 
 ```js
-var logger = require('fluent-logger').createFluentSender('tag', {
+var logger = require('fluent-logger').createFluentSender('tag_prefix', {
    host: 'localhost',
    port: 24224,
    timeout: 3.0,
@@ -139,9 +139,11 @@ logger.info('this log record is sent to fluent daemon');
 
 ## Options
 
-**tag**
+**tag_prefix**
 
-The tag string.
+The tag prefix string.
+You can specify `null` when you use `FluentSender` directly.
+In this case, you must specify `label` when you call `emit`.
 
 **host**
 
