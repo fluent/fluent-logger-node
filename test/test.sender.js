@@ -224,7 +224,7 @@ describe("FluentSender", function(){
       args: ['foo', { bar: 1 }, function cb() { cb.called = true; }],
       expect: {
         tag: 'debug.foo',
-        data: { bar: 1 },
+        data: { bar: 1 }
       }
     },
 
