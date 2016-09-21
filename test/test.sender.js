@@ -458,7 +458,7 @@ describe("FluentSender", function(){
     });
   });
 
-  it('can write stream.', function(done){
+  it('should write stream.', function(done){
     runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', { port: server.port });
       var ss = s.toStream('record')
@@ -471,7 +471,6 @@ describe("FluentSender", function(){
       ss.on('finish', function(){
         s.end(null, null, function(){
           finish(function(data){
-            console.log()
             expect(data[0].data).to.be.equal('data1');
             expect(data[1].data).to.be.equal('data2');
             expect(data[2].data).to.be.equal('data3');
