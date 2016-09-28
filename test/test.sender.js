@@ -458,19 +458,19 @@ describe("FluentSender", function(){
     });
   });
 
-  it('should write stream.', function(done){
-    runServer({}, function(server, finish){
+  it('should write stream.', function(done) {
+    runServer({}, function(server, finish) {
       var s = new sender.FluentSender('debug', { port: server.port });
-      var ss = s.toStream('record')
-      var pt = new stream.PassThrough()
-      pt.pipe(ss)
-      pt.push('data1\n')
-      pt.push('data2\ndata')
-      pt.push('3\ndata4\n')
-      pt.end()
-      ss.on('finish', function(){
-        s.end(null, null, function(){
-          finish(function(data){
+      var ss = s.toStream('record');
+      var pt = new stream.PassThrough();
+      pt.pipe(ss);
+      pt.push('data1\n');
+      pt.push('data2\ndata');
+      pt.push('3\ndata4\n');
+      pt.end();
+      ss.on('finish', function() {
+        s.end(null, null, function() {
+          finish(function(data) {
             expect(data[0].data).to.be.equal('data1');
             expect(data[1].data).to.be.equal('data2');
             expect(data[2].data).to.be.equal('data3');
