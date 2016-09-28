@@ -137,6 +137,22 @@ logger.log('info', 'this log record is sent to fluent daemon');
 logger.info('this log record is sent to fluent daemon');
 ```
 
+### stream
+
+Several libraries use stream as output.
+
+```js
+var sender = require('fluent-logger').createFluentSender('tag_prefix', {
+   host: 'localhost',
+   port: 24224,
+   timeout: 3.0,
+   reconnectInterval: 600000 // 10 minutes
+});
+var logger = new Console(sender.toStream('stdout'), sender.toStream('stderr'));
+logger.log('this log record is sent to fluent daemon');
+```
+
+
 ## Options
 
 **tag_prefix**
