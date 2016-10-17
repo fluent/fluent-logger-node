@@ -14,14 +14,14 @@ describe("FluentSender", function(){
         emits.push(function(done){ s1.emit('record', k, done); });
       }
       for(var i=0; i<10; i++){
-        emit(i);
+        emit({number: i});
       }
       emits.push(function(){
         finish(function(data){
           expect(data.length).to.be.equal(10);
           for(var i=0; i<10; i++){
             expect(data[i].tag).to.be.equal("debug.record");
-            expect(data[i].data).to.be.equal(i);
+            expect(data[i].data.number).to.be.equal(i);
           }
           done();
         });
@@ -39,23 +39,23 @@ describe("FluentSender", function(){
       expect(err.code).to.be.equal('ECONNREFUSED');
       done();
     });
-    s.emit('test connection error', 'foobar');
+    s.emit('test connection error', {foo:'bar'});
   });
 
 
   it('should assure the sequence.', function(done){
     runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
-      s.emit('1st record', '1st data');
-      s.emit('2nd record', '2nd data');
-      s.end('last record', 'last data', function(){
+      s.emit('1st record', {message: '1st data'});
+      s.emit('2nd record', {message: '2nd data'});
+      s.end('last record', {message: 'last data'}, function(){
         finish(function(data){
           expect(data[0].tag).to.be.equal('debug.1st record');
-          expect(data[0].data).to.be.equal('1st data');
+          expect(data[0].data.message).to.be.equal('1st data');
           expect(data[1].tag).to.be.equal('debug.2nd record');
-          expect(data[1].data).to.be.equal('2nd data');
+          expect(data[1].data.message).to.be.equal('2nd data');
           expect(data[2].tag).to.be.equal('debug.last record');
-          expect(data[2].data).to.be.equal('last data');
+          expect(data[2].data.message).to.be.equal('last data');
           done();
         });
       });
@@ -68,7 +68,7 @@ describe("FluentSender", function(){
       var timestamp = new Date(2222, 12, 04);
       var timestamp_seconds_since_epoch = Math.floor(timestamp.getTime() / 1000);
 
-      s.emit("1st record", "1st data", timestamp, function() {
+      s.emit("1st record", {message: "1st data"}, timestamp, function() {
         finish(function(data) {
           expect(data[0].time).to.be.equal(timestamp_seconds_since_epoch);
           done();
@@ -82,7 +82,7 @@ describe("FluentSender", function(){
       var s = new sender.FluentSender('debug', {port: server.port});
       var timestamp = Math.floor(new Date().getTime() / 1000);
 
-      s.emit("1st record", "1st data", timestamp, function() {
+      s.emit("1st record", {message: "1st data"}, timestamp, function() {
         finish(function(data) {
           expect(data[0].time).to.be.equal(timestamp);
           done();
@@ -93,20 +93,20 @@ describe("FluentSender", function(){
 
   it('should resume the connection automatically and flush the queue', function(done){
     var s = new sender.FluentSender('debug');
-    s.emit('1st record', '1st data');
+    s.emit('1st record', {message: '1st data'});
     s.on('error', function(err){
       expect(err.code).to.be.equal('ECONNREFUSED');
       runServer({}, function(server, finish){
         s.port = server.port;
-        s.emit('2nd record', '2nd data');
-        s.end('last record', 'last data', function(){
+        s.emit('2nd record', {message: '2nd data'});
+        s.end('last record', {message: 'last data'}, function(){
           finish(function(data){
             expect(data[0].tag).to.be.equal('debug.1st record');
-            expect(data[0].data).to.be.equal('1st data');
+            expect(data[0].data.message).to.be.equal('1st data');
             expect(data[1].tag).to.be.equal('debug.2nd record');
-            expect(data[1].data).to.be.equal('2nd data');
+            expect(data[1].data.message).to.be.equal('2nd data');
             expect(data[2].tag).to.be.equal('debug.last record');
-            expect(data[2].data).to.be.equal('last data');
+            expect(data[2].data.message).to.be.equal('last data');
             done();
           });
         });
@@ -117,7 +117,7 @@ describe("FluentSender", function(){
   it('should reconnect when fluentd close the client socket suddenly', function(done){
     runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
-      s.emit('foo', 'bar', function(){
+      s.emit('foo', {message: 'bar'}, function(){
         // connected
         server.close(function(){
           // waiting for the server closing all client socket.
@@ -125,10 +125,10 @@ describe("FluentSender", function(){
             if( !(s._socket && s._socket.writable) ){
               runServer({}, function(_server2, finish){
                 s.port = _server2.port;   // in actuall case, s.port does not need to be updated.
-                s.emit('bar', 'hoge', function(){
+                s.emit('bar', {message: 'hoge'}, function(){
                   finish(function(data){
                     expect(data[0].tag).to.be.equal('debug.bar');
-                    expect(data[0].data).to.be.equal('hoge');
+                    expect(data[0].data.message).to.be.equal('hoge');
                     done();
                   });
                 });
@@ -155,14 +155,14 @@ describe("FluentSender", function(){
         emits.push(function(done){ s1.emit('record', k, done); });
       }
       for (var i=0; i<10; i++) {
-        emit(i);
+        emit({number: i});
       }
       emits.push(function(){
         finish(function(data){
           expect(data.length).to.be.equal(10);
           for(var i=0; i<10; i++){
             expect(data[i].tag).to.be.equal("debug.record");
-            expect(data[i].data).to.be.equal(i);
+            expect(data[i].data.number).to.be.equal(i);
             expect(data[i].options.chunk).to.be.equal(server.messages[i].options.chunk);
           }
           done();
@@ -182,7 +182,7 @@ describe("FluentSender", function(){
       s1.on('response-timeout', function(error) {
         expect(error).to.be.equal('ack response timeout');
       });
-      s1.emit('record', 1);
+      s1.emit('record', {number: 1});
       finish(function(data) {
         expect(data.length).to.be.equal(1);
         done();
@@ -443,14 +443,14 @@ describe("FluentSender", function(){
   it('should not flush queue if existing connection is unavailable.', function(done){
     runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
-      s.emit('1st record', '1st data', function(){
+      s.emit('1st record', {message: '1st data'}, function(){
         s._socket.destroy();
-        s.emit('2nd record', '2nd data', function(){
+        s.emit('2nd record', {message: '2nd data'}, function(){
           finish(function(data){
             expect(data[0].tag).to.be.equal("debug.1st record");
-            expect(data[0].data).to.be.equal("1st data");
+            expect(data[0].data.message).to.be.equal("1st data");
             expect(data[1].tag).to.be.equal("debug.2nd record");
-            expect(data[1].data).to.be.equal("2nd data");
+            expect(data[1].data.message).to.be.equal("2nd data");
             done();
           });
         });
@@ -471,10 +471,10 @@ describe("FluentSender", function(){
       ss.on('finish', function() {
         s.end(null, null, function() {
           finish(function(data) {
-            expect(data[0].data).to.be.equal('data1');
-            expect(data[1].data).to.be.equal('data2');
-            expect(data[2].data).to.be.equal('data3');
-            expect(data[3].data).to.be.equal('data4');
+            expect(data[0].data.message).to.be.equal('data1');
+            expect(data[1].data.message).to.be.equal('data2');
+            expect(data[2].data.message).to.be.equal('data3');
+            expect(data[3].data.message).to.be.equal('data4');
             done();
           });
         });
