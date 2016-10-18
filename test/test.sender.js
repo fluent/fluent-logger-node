@@ -471,10 +471,10 @@ describe("FluentSender", function(){
       ss.on('finish', function() {
         s.end(null, null, function() {
           finish(function(data) {
-            expect(data[0].data).to.be.equal('data1');
-            expect(data[1].data).to.be.equal('data2');
-            expect(data[2].data).to.be.equal('data3');
-            expect(data[3].data).to.be.equal('data4');
+            expect(data[0].data.message).to.be.equal('data1');
+            expect(data[1].data.message).to.be.equal('data2');
+            expect(data[2].data.message).to.be.equal('data3');
+            expect(data[3].data.message).to.be.equal('data4');
             done();
           });
         });
