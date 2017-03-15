@@ -91,6 +91,19 @@ describe("FluentSender", function(){
     });
   });
 
+  it('should allow to emit with a custom tag', function(done){
+    runServer({}, function(server, finish){
+      var s = new sender.FluentSender('debug', {port: server.port, tags: {custom: 'tag'}});
+
+      s.emit("1st record", { message: "1st data" }, function() {
+        finish(function(data) {
+          expect(data[0].data.custom).to.be.equal('tag');
+          done();
+        });
+      });
+    });
+  });
+
   it('should resume the connection automatically and flush the queue', function(done){
     var s = new sender.FluentSender('debug');
     s.emit('1st record', { message: '1st data' });

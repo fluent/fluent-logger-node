@@ -203,6 +203,17 @@ Change the protocol to at-least-once. The logger waits the ack from destination.
 
 This option is used when requireAckResponse is true. The default is 190. This default value is based on popular `tcp_syn_retries`.
 
+**tags**
+
+Inject additional data into every message. This is useful for environment tags or application functions. For example:
+
+```
+tags: {
+  env: 'DEV',
+  function: 'API'
+}
+```
+
 ## License
 
 Apache License, Version 2.0.
