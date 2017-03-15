@@ -15,7 +15,7 @@ describe('EventTime', function() {
     done();
   });
   it('should equal fromDate and fromTimestamp', function(done) {
-    var now = new Date(2017, 2, 15, 11, 8, 40, 999); // 2017-03-15 11:08:40 +0900
+    var now = new Date(1489543720999); // 2017-03-15T02:08:40.999Z
     var timestamp = now.getTime();
     var eventTime = JSON.stringify(new EventTime(1489543720, 999000000));
     var eventTime1 = JSON.stringify(EventTime.fromDate(now));
