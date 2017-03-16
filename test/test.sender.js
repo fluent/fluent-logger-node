@@ -36,6 +36,22 @@ describe("FluentSender", function(){
     });
   });
 
+  it('should emit connect event', function(done) {
+    runServer({}, function(server, finish) {
+      var s = new sender.FluentSender('debug', {port: server.port});
+      var called = false;
+      s.on('connect', function() {
+        called = true;
+      });
+      s.emit({message: "1st message"}, function() {
+        finish(function(data) {
+          expect(called).to.equal(true);
+          done();
+        });
+      });
+    });
+  });
+
   it('should raise error when connection fails', function(done){
     var s = new sender.FluentSender('debug', {
       host: 'localhost',
