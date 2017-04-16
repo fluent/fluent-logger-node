@@ -30,7 +30,7 @@ describe("log4js", function(){
           finish(function(data){
             expect(data[0].tag).to.be.equal('debug.INFO');
             expect(data[0].data).exist;
-            expect(data[0].data.data).to.be.equal('foo bar');
+            expect(data[0].data.data).to.deep.equal(['foo %s', 'bar']);
             expect(data[0].data.category).to.be.equal('mycategory');
             expect(data[0].data.timestamp).exist;
             expect(data[0].data.levelInt).exist;
