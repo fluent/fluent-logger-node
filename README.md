@@ -235,6 +235,11 @@ Change the protocol to at-least-once. The logger waits the ack from destination.
 
 This option is used when requireAckResponse is true. The default is 190. This default value is based on popular `tcp_syn_retries`.
 
+**internalLogger**
+
+Set internal logger object for FluentLogger. Use `console` by default.
+This logger requires `info` and `error` method.
+
 ## License
 
 Apache License, Version 2.0.
