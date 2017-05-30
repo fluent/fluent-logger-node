@@ -64,6 +64,35 @@ describe("FluentSender", function(){
     s.emit('test connection error', { message: 'foobar' });
   });
 
+  it('should log error when connection fails w/ internal logger', function(done) {
+    var logger = {
+      buffer: {
+        info: [],
+        error: []
+      },
+      info: function(message) {
+        this.buffer.info.push(message);
+      },
+      error: function(message) {
+        this.buffer.error.push(message);
+      }
+    };
+    var s = new sender.FluentSender('debug', {
+      host: 'localhost',
+      port: 65535,
+      internalLogger: logger
+    });
+    s._setupErrorHandler();
+    s.on('error', function(err) {
+      expect(logger.buffer.info).to.have.lengthOf(1);
+      expect(logger.buffer.info[0]).to.be.equal('Fluentd will reconnect after 600 seconds');
+      expect(logger.buffer.error).to.have.lengthOf(1);
+      expect(logger.buffer.error[0]).to.be.equal('Fluentd error');
+      done();
+    });
+    s.emit('test connection error', { message: 'foobar' });
+  });
+
 
   it('should assure the sequence.', function(done){
     runServer({}, function(server, finish){
