@@ -562,7 +562,7 @@ describe("FluentSender", function(){
     });
   });
 
-  it('should process messages sequentially with requireAckResponse=true', function(done) {
+  it('should process messages step by step on requireAckResponse=true', function(done) {
     runServer({ requireAckResponse: true }, function(server, finish) {
       var s = new sender.FluentSender('debug', {
         port: server.port,
