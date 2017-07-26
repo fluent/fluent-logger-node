@@ -1,6 +1,6 @@
 {
   "name": "fluent-logger",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "main": "./lib/index.js",
   "scripts": {
     "test": "mocha -t 10000 --recursive"
@@ -33,10 +33,10 @@
     "msgpack-lite": "*"
   },
   "devDependencies": {
-    "mocha": "",
+    "async": "",
     "chai": "",
     "log4js": "<2",
-    "async": "",
+    "mocha": "",
     "winston": ""
   },
   "license": "Apache-2.0",
