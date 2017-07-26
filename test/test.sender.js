@@ -562,4 +562,35 @@ describe("FluentSender", function(){
     });
   });
 
+  it('should process messages step by step on requireAckResponse=true', function(done) {
+    runServer({ requireAckResponse: true }, function(server, finish) {
+      var s = new sender.FluentSender('debug', {
+        port: server.port,
+        timeout: 3.0,
+        reconnectInterval: 600000,
+        requireAckResponse: true
+      });
+      var errors = [];
+      s.on('error', function(err) {
+        errors.push(count+': '+err);
+      });
+      var maxCount = 20;
+      var count = 0;
+      var sendMessage = function() {
+        var time = Math.round(Date.now() / 1000);
+        var data = {
+          count: count
+        };
+        s.emit('test', data, time);
+        count++;
+        if (count > maxCount) {
+          clearInterval(timer);
+          finish();
+          expect(errors.join('\n')).to.be.equal('');
+          done();
+        }
+      };
+      var timer = setInterval(sendMessage, 10);
+    });
+  });
 });
