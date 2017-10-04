@@ -603,7 +603,7 @@ describe("FluentSender", function(){
         serverHostname: 'server.example.com',
         sharedKey: sharedKey
       },
-      checkPing: () => { return { succeeded: true, sharedKeySalt: sharedKeySalt }; }
+      checkPing: (data) => { return { succeeded: true, sharedKeySalt: data[2] }; }
     };
     runServer(options, (server, finish) => {
       let loggerOptions = {
