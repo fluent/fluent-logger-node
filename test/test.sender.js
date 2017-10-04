@@ -6,6 +6,7 @@ var stream = require('stream');
 var async = require('async');
 var EventEmitter = require('events').EventEmitter;
 var msgpack = require('msgpack-lite');
+var crypto = require('crypto');
 
 var codec = msgpack.createCodec();
 codec.addExtPacker(0x00, EventTime, EventTime.pack);
@@ -591,6 +592,43 @@ describe("FluentSender", function(){
         }
       };
       var timer = setInterval(sendMessage, 10);
+    });
+  });
+
+  it('should process handshake sahred key', (done) => {
+    let sharedKey = 'sharedkey';
+    let sharedKeySalt = crypto.randomBytes(16).toString('hex');
+    let options = {
+      security: {
+        serverHostname: 'server.example.com',
+        sharedKey: sharedKey
+      },
+      checkPing: () => { return { succeeded: true, sharedKeySalt: sharedKeySalt }; }
+    };
+    runServer(options, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        security: {
+          clientHostname: 'client.example.com',
+          sharedKey: sharedKey
+        },
+        sharedKeySalt: sharedKeySalt,
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.emit('test', { message: 'This is test 0' });
+      s.emit('test', { message: 'This is test 1' });
+      finish((data) => {
+        expect(data.length).to.be.equal(2);
+        expect(data[0].tag).to.be.equal('debug.test');
+        expect(data[0].data.message).to.be.equal('This is test 0');
+        expect(data[1].tag).to.be.equal('debug.test');
+        expect(data[1].data.message).to.be.equal('This is test 1');
+        done();
+      });
     });
   });
 });
