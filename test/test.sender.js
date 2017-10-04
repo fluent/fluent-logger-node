@@ -6,7 +6,6 @@ var stream = require('stream');
 var async = require('async');
 var EventEmitter = require('events').EventEmitter;
 var msgpack = require('msgpack-lite');
-var crypto = require('crypto');
 
 var codec = msgpack.createCodec();
 codec.addExtPacker(0x00, EventTime, EventTime.pack);
@@ -597,7 +596,6 @@ describe("FluentSender", function(){
 
   it('should process handshake sahred key', (done) => {
     let sharedKey = 'sharedkey';
-    let sharedKeySalt = crypto.randomBytes(16).toString('hex');
     let options = {
       security: {
         serverHostname: 'server.example.com',
@@ -612,7 +610,6 @@ describe("FluentSender", function(){
           clientHostname: 'client.example.com',
           sharedKey: sharedKey
         },
-        sharedKeySalt: sharedKeySalt,
         internalLogger: {
           info: () => {},
           error: () => {}
