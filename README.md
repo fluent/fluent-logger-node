@@ -237,6 +237,22 @@ Change the protocol to at-least-once. The logger waits the ack from destination.
 
 This option is used when requireAckResponse is true. The default is 190. This default value is based on popular `tcp_syn_retries`.
 
+**security.clientHostname**
+
+Set hostname of this logger. Use this value for hostname based authentication.
+
+**security.sharedKey**
+
+Shared key between client and server.
+
+**security.username**
+
+Set username for user based authentication. Default values is empty string.
+
+**security.password**
+
+Set password for user based authentication. Default values is empty string.
+
 **internalLogger**
 
 Set internal logger object for FluentLogger. Use `console` by default.
