@@ -524,7 +524,7 @@ describe("FluentSender", function(){
     runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
       s.emit('1st record', { message: '1st data' }, function(){
-        s._socket.destroy();
+        s._disconnect();
         s.emit('2nd record', { message: '2nd data' }, function(){
           finish(function(data){
             expect(data[0].tag).to.be.equal("debug.1st record");
