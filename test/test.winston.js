@@ -1,3 +1,4 @@
+'use strict';
 var expect = require('chai').expect;
 var winstonSupport = require('../lib/winston');
 var winston = require('winston');
