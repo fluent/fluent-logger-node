@@ -628,4 +628,74 @@ describe("FluentSender", function(){
       });
     });
   });
+
+  it('should process handshake user based authentication', (done) => {
+    let sharedKey = 'sharedkey';
+    let options = {
+      security: {
+        serverHostname: 'server.example.com',
+        sharedKey: sharedKey
+      },
+      checkPing: (data) => { return { succeeded: true, sharedKeySalt: data[2] }; }
+    };
+    runServer(options, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        security: {
+          clientHostname: 'client.example.com',
+          sharedKey: sharedKey,
+          username: 'fluentd',
+          password: 'password'
+        },
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.emit('test', { message: 'This is test 0' });
+      s.emit('test', { message: 'This is test 1' });
+      finish((data) => {
+        expect(data.length).to.be.equal(2);
+        expect(data[0].tag).to.be.equal('debug.test');
+        expect(data[0].data.message).to.be.equal('This is test 0');
+        expect(data[1].tag).to.be.equal('debug.test');
+        expect(data[1].data.message).to.be.equal('This is test 1');
+        done();
+      });
+    });
+  });
+
+  it('should process handshake failed', (done) => {
+    let sharedKey = 'sharedkey';
+    let options = {
+      security: {
+        serverHostname: 'server.example.com',
+        sharedKey: sharedKey
+      },
+      checkPing: (data) => { return { succeeded: false, reason: 'reason', sharedKeySalt: null }; }
+    };
+    runServer(options, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        security: {
+          clientHostname: 'client.example.com',
+          sharedKey: sharedKey
+        },
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.on('error', (err) => {
+        expect(err.message).to.be.equal('Authentication failed: reason');
+      });
+      s.emit('test', { message: 'This is test 0' });
+      finish((data) => {
+        expect(data.length).to.be.equal(0);
+        done();
+      });
+    });
+  });
 });
