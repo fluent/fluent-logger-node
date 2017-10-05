@@ -600,8 +600,7 @@ describe("FluentSender", function(){
       security: {
         serverHostname: 'server.example.com',
         sharedKey: sharedKey
-      },
-      checkPing: (data) => { return { succeeded: true, sharedKeySalt: data[2] }; }
+      }
     };
     runServer(options, (server, finish) => {
       let loggerOptions = {
@@ -634,9 +633,10 @@ describe("FluentSender", function(){
     let options = {
       security: {
         serverHostname: 'server.example.com',
-        sharedKey: sharedKey
-      },
-      checkPing: (data) => { return { succeeded: true, sharedKeySalt: data[2] }; }
+        sharedKey: sharedKey,
+        username: 'fluentd',
+        password: 'password'
+      }
     };
     runServer(options, (server, finish) => {
       let loggerOptions = {
