@@ -628,6 +628,38 @@ describe("FluentSender", function(){
     });
   });
 
+  it('should process handshake sahred key mismatch', (done) => {
+    let sharedKey = 'sharedkey';
+    let options = {
+      security: {
+        serverHostname: 'server.example.com',
+        sharedKey: sharedKey
+      }
+    };
+    runServer(options, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        security: {
+          clientHostname: 'client.example.com',
+          sharedKey: 'wrongSharedKey'
+        },
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.on('error', (error) => {
+        expect(error.message).to.be.equal('Authentication failed: shared key mismatch');
+      });
+      s.emit('test', { message: 'This is test 0' });
+      finish((data) => {
+        expect(data.length).to.be.equal(0);
+        done();
+      });
+    });
+  });
+
   it('should process handshake user based authentication', (done) => {
     let sharedKey = 'sharedkey';
     let options = {
@@ -661,6 +693,42 @@ describe("FluentSender", function(){
         expect(data[0].data.message).to.be.equal('This is test 0');
         expect(data[1].tag).to.be.equal('debug.test');
         expect(data[1].data.message).to.be.equal('This is test 1');
+        done();
+      });
+    });
+  });
+
+  it('should process handshake user based authentication failed', (done) => {
+    let sharedKey = 'sharedkey';
+    let options = {
+      security: {
+        serverHostname: 'server.example.com',
+        sharedKey: sharedKey,
+        username: 'fluentd',
+        password: 'password'
+      }
+    };
+    runServer(options, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        security: {
+          clientHostname: 'client.example.com',
+          sharedKey: sharedKey,
+          username: 'fluentd',
+          password: 'wrongPassword'
+        },
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.on('error', (error) => {
+        expect(error.message).to.be.equal('Authentication failed: username/password mismatch');
+      });
+      s.emit('test', { message: 'This is test 0' });
+      finish((data) => {
+        expect(data.length).to.be.equal(0);
         done();
       });
     });
