@@ -117,7 +117,7 @@ describe("FluentSender", function(){
   it('should allow to emit with a custom timestamp', function(done){
     runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
-      var timestamp = new Date(2222, 12, 04);
+      var timestamp = new Date(2222, 12, 4);
       var timestamp_seconds_since_epoch = Math.floor(timestamp.getTime() / 1000);
 
       s.emit("1st record", { message: "1st data" }, timestamp, function() {
