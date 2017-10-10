@@ -242,6 +242,12 @@ This option is used when requireAckResponse is true. The default is 190. This de
 Set [Event Modes](https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v1#event-modes). This logger supports `Message` and `PackedForward`.
 Default is `Message`.
 
+**flushInterval**
+
+Set flush interval in milliseconds. This option has no effect in Message mode.
+The logger stores emitted events in buffer and flush events for each interval.
+Default `100`.
+
 **security.clientHostname**
 
 Set hostname of this logger. Use this value for hostname based authentication.
