@@ -595,6 +595,58 @@ describe("FluentSender", function(){
     });
   });
 
+  it('should process entries when using PackedForward Mode', (done) => {
+    runServer({}, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        forwardMode: 'PackedForward',
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.emit('test', { message: 'This is test 0' });
+      s.end('test', { message: 'This is test 1' });
+      setTimeout(() => {
+        finish((data) => {
+          expect(data.length).to.be.equal(2);
+          expect(data[0].tag).to.be.equal('debug.test');
+          expect(data[0].data.message).to.be.equal('This is test 0');
+          expect(data[1].tag).to.be.equal('debug.test');
+          expect(data[1].data.message).to.be.equal('This is test 1');
+          done();
+        });
+      }, 200);
+    });
+  });
+
+  it('should compress entries when using CompressedPackedForward Mode', (done) => {
+    runServer({}, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        forwardMode: 'CompressedPackedForward',
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.emit('test', { message: 'This is test 0' });
+      s.emit('test', { message: 'This is test 1' });
+      setTimeout(() => {
+        finish((data) => {
+          expect(data.length).to.be.equal(2);
+          expect(data[0].tag).to.be.equal('debug.test');
+          expect(data[0].data.message).to.be.equal('This is test 0');
+          expect(data[1].tag).to.be.equal('debug.test');
+          expect(data[1].data.message).to.be.equal('This is test 1');
+          done();
+        });
+      }, 200);
+    });
+  });
+
   it('should process handshake sahred key', (done) => {
     let sharedKey = 'sharedkey';
     let options = {
