@@ -313,6 +313,6 @@ Apache License, Version 2.0.
 [fluent-logger-python]: https://github.com/fluent/fluent-logger-python
 
 
-## Abour NodeJS versions
+## About NodeJS versions
 
 This package is compatible with NodeJS versions > 4.
