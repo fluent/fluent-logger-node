@@ -237,7 +237,7 @@ Change the protocol to at-least-once. The logger waits the ack from destination.
 
 This option is used when requireAckResponse is true. The default is 190. This default value is based on popular `tcp_syn_retries`.
 
-**forwardMode**
+**eventMode**
 
 Set [Event Modes](https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v1#event-modes). This logger supports `Message`, `PackedForward` and `CompressedPackedForward`.
 Default is `Message`.

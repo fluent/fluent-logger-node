@@ -599,7 +599,7 @@ describe("FluentSender", function(){
     runServer({}, (server, finish) => {
       let loggerOptions = {
         port: server.port,
-        forwardMode: 'PackedForward',
+        eventMode: 'PackedForward',
         internalLogger: {
           info: () => {},
           error: () => {}
@@ -625,7 +625,7 @@ describe("FluentSender", function(){
     runServer({}, (server, finish) => {
       let loggerOptions = {
         port: server.port,
-        forwardMode: 'CompressedPackedForward',
+        eventMode: 'CompressedPackedForward',
         internalLogger: {
           info: () => {},
           error: () => {}
