@@ -67,6 +67,43 @@ The emit method has following signature
 Where only the `record` argument is required. If the label is set it will be
 appended to the configured tag.
 
+### Shared key authentication
+
+Logger configuration:
+
+```js
+var logger = require('fluent-logger').createFluentSender('tag_prefix', {
+  host: 'localhost',
+  port: 24224,
+  timeout: 3.0,
+  reconnectInterval: 600000, // 10 minutes
+  security: {
+    clientHostname: "client.localdomain",
+    sharedKey: "secure_communication_is_awesome"
+  }
+});
+logger.emit('debug', { message: 'This is a message' });
+```
+
+Server configuration:
+
+```aconf
+<source>
+  @type forward
+  port 24224
+  <security>
+    self_hostname input.testing.local
+    shared_key secure_communication_is_awesome
+  </security>
+</source>
+
+<match dummy.*>
+  @type stdout
+</match>
+```
+
+See also [Fluentd](https://github.com/fluent/fluentd) examples.
+
 ### EventTime support
 
 We can also specify [EventTime](https://github.com/fluent/fluentd/wiki/Forward-Protocol-Specification-v1#eventtime-ext-format) as timestamp.
