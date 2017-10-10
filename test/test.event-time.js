@@ -1,3 +1,4 @@
+'use strict';
 var expect = require('chai').expect;
 var EventTime = require('../lib/event-time').EventTime;
 var msgpack = require('msgpack-lite');

@@ -1,3 +1,4 @@
+'use strict';
 var expect = require('chai').expect;
 var log4jsSupport = require('../lib/log4js');
 var log4js = require('log4js');

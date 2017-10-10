@@ -1,3 +1,4 @@
+'use strict';
 var expect = require('chai').expect;
 var sender = require('../lib/sender');
 var EventTime = require('../lib/event-time').EventTime;
@@ -116,7 +117,7 @@ describe("FluentSender", function(){
   it('should allow to emit with a custom timestamp', function(done){
     runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
-      var timestamp = new Date(2222, 12, 04);
+      var timestamp = new Date(2222, 12, 4);
       var timestamp_seconds_since_epoch = Math.floor(timestamp.getTime() / 1000);
 
       s.emit("1st record", { message: "1st data" }, timestamp, function() {
@@ -524,7 +525,7 @@ describe("FluentSender", function(){
     runServer({}, function(server, finish){
       var s = new sender.FluentSender('debug', {port: server.port});
       s.emit('1st record', { message: '1st data' }, function(){
-        s._socket.destroy();
+        s._disconnect();
         s.emit('2nd record', { message: '2nd data' }, function(){
           finish(function(data){
             expect(data[0].tag).to.be.equal("debug.1st record");
@@ -591,6 +592,231 @@ describe("FluentSender", function(){
         }
       };
       var timer = setInterval(sendMessage, 10);
+    });
+  });
+
+  it('should process entries when using PackedForward Mode', (done) => {
+    runServer({}, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        eventMode: 'PackedForward',
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.emit('test', { message: 'This is test 0' });
+      s.end('test', { message: 'This is test 1' });
+      setTimeout(() => {
+        finish((data) => {
+          expect(data.length).to.be.equal(2);
+          expect(data[0].tag).to.be.equal('debug.test');
+          expect(data[0].data.message).to.be.equal('This is test 0');
+          expect(data[1].tag).to.be.equal('debug.test');
+          expect(data[1].data.message).to.be.equal('This is test 1');
+          done();
+        });
+      }, 200);
+    });
+  });
+
+  it('should compress entries when using CompressedPackedForward Mode', (done) => {
+    runServer({}, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        eventMode: 'CompressedPackedForward',
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.emit('test', { message: 'This is test 0' });
+      s.emit('test', { message: 'This is test 1' });
+      setTimeout(() => {
+        finish((data) => {
+          expect(data.length).to.be.equal(2);
+          expect(data[0].tag).to.be.equal('debug.test');
+          expect(data[0].data.message).to.be.equal('This is test 0');
+          expect(data[1].tag).to.be.equal('debug.test');
+          expect(data[1].data.message).to.be.equal('This is test 1');
+          done();
+        });
+      }, 200);
+    });
+  });
+
+  it('should process handshake sahred key', (done) => {
+    let sharedKey = 'sharedkey';
+    let options = {
+      security: {
+        serverHostname: 'server.example.com',
+        sharedKey: sharedKey
+      }
+    };
+    runServer(options, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        security: {
+          clientHostname: 'client.example.com',
+          sharedKey: sharedKey
+        },
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.emit('test', { message: 'This is test 0' });
+      s.emit('test', { message: 'This is test 1' });
+      finish((data) => {
+        expect(data.length).to.be.equal(2);
+        expect(data[0].tag).to.be.equal('debug.test');
+        expect(data[0].data.message).to.be.equal('This is test 0');
+        expect(data[1].tag).to.be.equal('debug.test');
+        expect(data[1].data.message).to.be.equal('This is test 1');
+        done();
+      });
+    });
+  });
+
+  it('should process handshake sahred key mismatch', (done) => {
+    let sharedKey = 'sharedkey';
+    let options = {
+      security: {
+        serverHostname: 'server.example.com',
+        sharedKey: sharedKey
+      }
+    };
+    runServer(options, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        security: {
+          clientHostname: 'client.example.com',
+          sharedKey: 'wrongSharedKey'
+        },
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.on('error', (error) => {
+        expect(error.message).to.be.equal('Authentication failed: shared key mismatch');
+      });
+      s.emit('test', { message: 'This is test 0' });
+      finish((data) => {
+        expect(data.length).to.be.equal(0);
+        done();
+      });
+    });
+  });
+
+  it('should process handshake user based authentication', (done) => {
+    let sharedKey = 'sharedkey';
+    let options = {
+      security: {
+        serverHostname: 'server.example.com',
+        sharedKey: sharedKey,
+        username: 'fluentd',
+        password: 'password'
+      }
+    };
+    runServer(options, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        security: {
+          clientHostname: 'client.example.com',
+          sharedKey: sharedKey,
+          username: 'fluentd',
+          password: 'password'
+        },
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.emit('test', { message: 'This is test 0' });
+      s.emit('test', { message: 'This is test 1' });
+      finish((data) => {
+        expect(data.length).to.be.equal(2);
+        expect(data[0].tag).to.be.equal('debug.test');
+        expect(data[0].data.message).to.be.equal('This is test 0');
+        expect(data[1].tag).to.be.equal('debug.test');
+        expect(data[1].data.message).to.be.equal('This is test 1');
+        done();
+      });
+    });
+  });
+
+  it('should process handshake user based authentication failed', (done) => {
+    let sharedKey = 'sharedkey';
+    let options = {
+      security: {
+        serverHostname: 'server.example.com',
+        sharedKey: sharedKey,
+        username: 'fluentd',
+        password: 'password'
+      }
+    };
+    runServer(options, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        security: {
+          clientHostname: 'client.example.com',
+          sharedKey: sharedKey,
+          username: 'fluentd',
+          password: 'wrongPassword'
+        },
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.on('error', (error) => {
+        expect(error.message).to.be.equal('Authentication failed: username/password mismatch');
+      });
+      s.emit('test', { message: 'This is test 0' });
+      finish((data) => {
+        expect(data.length).to.be.equal(0);
+        done();
+      });
+    });
+  });
+
+  it('should process handshake failed', (done) => {
+    let sharedKey = 'sharedkey';
+    let options = {
+      security: {
+        serverHostname: 'server.example.com',
+        sharedKey: sharedKey
+      },
+      checkPing: (data) => { return { succeeded: false, reason: 'reason', sharedKeySalt: null }; }
+    };
+    runServer(options, (server, finish) => {
+      let loggerOptions = {
+        port: server.port,
+        security: {
+          clientHostname: 'client.example.com',
+          sharedKey: sharedKey
+        },
+        internalLogger: {
+          info: () => {},
+          error: () => {}
+        }
+      };
+      var s = new sender.FluentSender('debug', loggerOptions);
+      s.on('error', (err) => {
+        expect(err.message).to.be.equal('Authentication failed: reason');
+      });
+      s.emit('test', { message: 'This is test 0' });
+      finish((data) => {
+        expect(data.length).to.be.equal(0);
+        done();
+      });
     });
   });
 });
