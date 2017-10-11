@@ -13,6 +13,15 @@ codec.addExtPacker(0x00, EventTime, EventTime.pack);
 codec.addExtUnpacker(0x00, EventTime.unpack);
 
 describe("FluentSender", function(){
+  it('should throw error', (done) => {
+    try {
+      let s = new sender.FluentSender('debug', { eventMode: 'Unknown' });
+    } catch (e) {
+      expect(e.message).to.be.equal('Unknown event mode: Unknown');
+      done();
+    }
+  });
+
   it('should send records', function(done){
     runServer({}, function(server, finish){
       var s1 = new sender.FluentSender('debug', { port: server.port });
