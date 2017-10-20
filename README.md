@@ -140,53 +140,7 @@ logger.on('connect', function() {
 
 ### log4js
 
-Before using [log4js] support, you should install it IN YOUR APPLICATION.
-
-```js
-var log4js = require('log4js');
-log4js.addAppender(require('fluent-logger').support.log4jsAppender('mytag', {
-   host: 'localhost',
-   port: 24224,
-   timeout: 3.0
-}));
-
-var logger = log4js.getLogger('foo');
-logger.info('this log record is sent to fluent daemon');
-```
-
-You can add log level after tag automatically.
-
-```js
-var log4js = require('log4js');
-log4js.addAppender(require('fluent-logger').support.log4jsAppender('mytag', {
-   host: 'localhost',
-   port: 24224,
-   timeout: 3.0,
-   levelTag: true
-}));
-
-var logger = log4js.getLogger('foo');
-logger.info('this log record is sent to fluent daemon');
-```
-
-If `levelTag` is `true`, tag is "mytag.INFO". If `levelTag` is `false`, tag is "mytag".
-
-You can handle inner events such as 'error' it is raised when fluentd
-is down.
-
-```js
-var log4js = require('log4js');
-var appender = require('fluent-logger').support.log4jsAppender('mytag', {
-  host: 'localhost',
-  port: 24224,
-  timeout: 3.0
-});
-appender.on('error', function(err) {
-  // Handle err object
-  console.log(err);
-});
-log4js.addAppender(appender);
-```
+Use [log4js-fluent-appender](https://www.npmjs.com/package/log4js-fluent-appender).
 
 ### winston
 

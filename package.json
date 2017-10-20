@@ -35,7 +35,6 @@
   "devDependencies": {
     "async": "",
     "chai": "",
-    "log4js": "<2",
     "mocha": "",
     "winston": ""
   },
