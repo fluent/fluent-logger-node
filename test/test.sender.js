@@ -92,12 +92,12 @@ describe("FluentSender", function(){
       port: 65535,
       internalLogger: logger
     });
-    s._setupErrorHandler();
-    s.on('error', function(err) {
+    s._setupErrorHandler((timeoutId) => {
       expect(logger.buffer.info).to.have.lengthOf(1);
       expect(logger.buffer.info[0]).to.be.equal('Fluentd will reconnect after 600 seconds');
       expect(logger.buffer.error).to.have.lengthOf(1);
       expect(logger.buffer.error[0]).to.be.equal('Fluentd error');
+      clearTimeout(timeoutId);
       done();
     });
     s.emit('test connection error', { message: 'foobar' });
