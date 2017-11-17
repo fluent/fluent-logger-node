@@ -42,6 +42,9 @@ module.exports = {
     "space-in-parens": [
       "error"
     ],
+    "space-infix-ops": [
+      "error"
+    ],
     "no-unused-vars": [
       "error", {
         "varsIgnorePattern": "^_",

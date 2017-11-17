@@ -33,13 +33,13 @@ describe('FluentSender', function() {
       function emit(k) {
         emits.push(function(done) { s1.emit('record', k, done); });
       }
-      for (var i=0; i<10; i++) {
+      for (var i = 0; i < 10; i++) {
         emit({ number: i });
       }
       emits.push(function() {
         finish(function(data) {
           expect(data.length).to.be.equal(10);
-          for (var i=0; i<10; i++) {
+          for (var i = 0; i < 10; i++) {
             expect(data[i].tag).to.be.equal('debug.record');
             expect(data[i].data.number).to.be.equal(i);
           }
@@ -234,13 +234,13 @@ describe('FluentSender', function() {
       function emit(k) {
         emits.push(function(done) { s1.emit('record', k, done); });
       }
-      for (var i=0; i<10; i++) {
+      for (var i = 0; i < 10; i++) {
         emit({ number: i });
       }
       emits.push(function() {
         finish(function(data) {
           expect(data.length).to.be.equal(10);
-          for (var i=0; i<10; i++) {
+          for (var i = 0; i < 10; i++) {
             expect(data[i].tag).to.be.equal('debug.record');
             expect(data[i].data.number).to.be.equal(i);
             expect(data[i].options.chunk).to.be.equal(server.messages[i].options.chunk);
@@ -367,7 +367,7 @@ describe('FluentSender', function() {
       }
     }
   ].forEach(function(testCase) {
-    it('should send records with '+testCase.name+' arguments', function(done) {
+    it('should send records with ' + testCase.name + ' arguments', function(done) {
       runServer({}, function(server, finish) {
         var s1 = new sender.FluentSender('debug', { port: server.port });
         s1.emit.apply(s1, testCase.args);
@@ -431,7 +431,7 @@ describe('FluentSender', function() {
       }
     }
   ].forEach(function(testCase) {
-    it('should send records with '+testCase.name+' arguments without a default tag', function(done) {
+    it('should send records with ' + testCase.name + ' arguments without a default tag', function(done) {
       runServer({}, function(server, finish) {
         var s1 = new sender.FluentSender(null, { port: server.port });
         s1.emit.apply(s1, testCase.args);
@@ -482,7 +482,7 @@ describe('FluentSender', function() {
       args: [{ bar: 1 }, new Date(1384434467952)]
     }
   ].forEach(function(testCase) {
-    it('should not send records with '+testCase.name+' arguments without a default tag', function(done) {
+    it('should not send records with ' + testCase.name + ' arguments without a default tag', function(done) {
       runServer({}, function(server, finish) {
         var s1 = new sender.FluentSender(null, { port: server.port });
         s1.on('error', function(error) {
@@ -586,7 +586,7 @@ describe('FluentSender', function() {
       });
       var errors = [];
       s.on('error', function(err) {
-        errors.push(count+': '+err);
+        errors.push(count + ': ' + err);
       });
       var maxCount = 20;
       var count = 0;
