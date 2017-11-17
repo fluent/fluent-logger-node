@@ -39,6 +39,9 @@ module.exports = {
     "keyword-spacing": [
       "error"
     ],
+    "space-in-parens": [
+      "error"
+    ],
     "no-unused-vars": [
       "error", {
         "varsIgnorePattern": "^_",
