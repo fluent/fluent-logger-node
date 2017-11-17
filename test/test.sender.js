@@ -1,5 +1,7 @@
 'use strict';
 /* globals describe, it */
+/* eslint no-unused-vars: ["error", {"args": "none"}] */
+/* eslint node/no-unpublished-require: ["error", {"allowModules": ["async", "chai"]}] */
 var expect = require('chai').expect;
 var sender = require('../lib/sender');
 var EventTime = require('../lib/event-time').EventTime;
