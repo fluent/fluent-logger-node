@@ -6,18 +6,18 @@ var winstonSupport = require('../lib/winston');
 var winston = require('winston');
 var runServer = require('../lib/testHelper').runServer;
 
-describe('winston', function() {
-  describe('name', function() {
-    it('should be "fluent"', function(done) {
+describe('winston', () => {
+  describe('name', () => {
+    it('should be "fluent"', (done) => {
       expect((new (winstonSupport.Transport)()).name).to.be.equal('fluent');
       done();
     });
   });
 
-  describe('transport', function() {
+  describe('transport', () => {
 
-    it('should send log records', function(done) {
-      runServer({}, function(server, finish) {
+    it('should send log records', (done) => {
+      runServer({}, (server, finish) => {
         var logger = new (winston.Logger)({
           transports: [
             new (winstonSupport.Transport)('debug', {port: server.port})
@@ -26,8 +26,8 @@ describe('winston', function() {
 
 
         logger.info('foo %s', 'bar', {x: 1});
-        setTimeout(function() {
-          finish(function(data) {
+        setTimeout(() => {
+          finish((data) => {
             expect(data[0].tag).to.be.equal('debug');
             expect(data[0].data).exist;
             expect(data[0].time).exist;

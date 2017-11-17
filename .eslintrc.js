@@ -48,6 +48,9 @@ module.exports = {
     "space-unary-ops": [
       "error"
     ],
+    "prefer-arrow-callback": [
+      "warn"
+    ],
     "no-unused-vars": [
       "error", {
         "varsIgnorePattern": "^_",

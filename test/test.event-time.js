@@ -9,15 +9,15 @@ var codec = msgpack.createCodec();
 codec.addExtPacker(0x00, EventTime, EventTime.pack);
 codec.addExtUnpacker(0x00, EventTime.unpack);
 
-describe('EventTime', function() {
-  it('should equal to decoded value', function(done) {
+describe('EventTime', () => {
+  it('should equal to decoded value', (done) => {
     var eventTime = EventTime.now();
     var encoded = msgpack.encode(eventTime, { codec: codec });
     var decoded = msgpack.decode(encoded, { codec: codec });
     expect(JSON.stringify(decoded)).to.equal(JSON.stringify(eventTime));
     done();
   });
-  it('should equal fromDate and fromTimestamp', function(done) {
+  it('should equal fromDate and fromTimestamp', (done) => {
     var now = new Date(1489543720999); // 2017-03-15T02:08:40.999Z
     var timestamp = now.getTime();
     var eventTime = JSON.stringify(new EventTime(1489543720, 999000000));
