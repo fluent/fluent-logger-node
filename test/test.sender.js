@@ -1,5 +1,6 @@
 'use strict';
 /* globals describe, it */
+/* eslint brace-style: ["error", "1tbs", {"allowSingleLine": true}] */
 /* eslint no-unused-vars: ["error", {"args": "none"}] */
 /* eslint node/no-unpublished-require: ["error", {"allowModules": ["async", "chai"]}] */
 var expect = require('chai').expect;

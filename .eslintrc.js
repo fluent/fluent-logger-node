@@ -27,6 +27,9 @@ module.exports = {
       "error",
       "always"
     ],
+    "brace-style": [
+      "error"
+    ],
     "no-unused-vars": [
       "error", {
         "varsIgnorePattern": "^_",
