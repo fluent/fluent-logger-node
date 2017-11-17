@@ -25,6 +25,12 @@ module.exports = {
       "error",
       "always"
     ],
+    "no-unused-vars": [
+      "error", {
+        "varsIgnorePattern": "^_",
+        "args": "none"
+      }
+    ],
     "node/exports-style": [
       "error",
       "module.exports"
