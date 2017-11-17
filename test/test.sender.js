@@ -16,7 +16,7 @@ var codec = msgpack.createCodec();
 codec.addExtPacker(0x00, EventTime, EventTime.pack);
 codec.addExtUnpacker(0x00, EventTime.unpack);
 
-describe('FluentSender', function(){
+describe('FluentSender', function() {
   it('should throw error', (done) => {
     try {
       new sender.FluentSender('debug', { eventMode: 'Unknown' });
@@ -26,20 +26,20 @@ describe('FluentSender', function(){
     }
   });
 
-  it('should send records', function(done){
-    runServer({}, function(server, finish){
+  it('should send records', function(done) {
+    runServer({}, function(server, finish) {
       var s1 = new sender.FluentSender('debug', { port: server.port });
       var emits = [];
-      function emit(k){
-        emits.push(function(done){ s1.emit('record', k, done); });
+      function emit(k) {
+        emits.push(function(done) { s1.emit('record', k, done); });
       }
-      for(var i=0; i<10; i++){
+      for(var i=0; i<10; i++) {
         emit({ number: i });
       }
-      emits.push(function(){
-        finish(function(data){
+      emits.push(function() {
+        finish(function(data) {
           expect(data.length).to.be.equal(10);
-          for(var i=0; i<10; i++){
+          for(var i=0; i<10; i++) {
             expect(data[i].tag).to.be.equal('debug.record');
             expect(data[i].data.number).to.be.equal(i);
           }
@@ -66,12 +66,12 @@ describe('FluentSender', function(){
     });
   });
 
-  it('should raise error when connection fails', function(done){
+  it('should raise error when connection fails', function(done) {
     var s = new sender.FluentSender('debug', {
       host: 'localhost',
       port: 65535
     });
-    s.on('error', function(err){
+    s.on('error', function(err) {
       expect(err.code).to.be.equal('ECONNREFUSED');
       done();
     });
@@ -108,13 +108,13 @@ describe('FluentSender', function(){
   });
 
 
-  it('should assure the sequence.', function(done){
-    runServer({}, function(server, finish){
+  it('should assure the sequence.', function(done) {
+    runServer({}, function(server, finish) {
       var s = new sender.FluentSender('debug', {port: server.port});
       s.emit('1st record', { message: '1st data' });
       s.emit('2nd record', { message: '2nd data' });
-      s.end('last record', { message: 'last data' }, function(){
-        finish(function(data){
+      s.end('last record', { message: 'last data' }, function() {
+        finish(function(data) {
           expect(data[0].tag).to.be.equal('debug.1st record');
           expect(data[0].data.message).to.be.equal('1st data');
           expect(data[1].tag).to.be.equal('debug.2nd record');
@@ -127,8 +127,8 @@ describe('FluentSender', function(){
     });
   });
 
-  it('should allow to emit with a custom timestamp', function(done){
-    runServer({}, function(server, finish){
+  it('should allow to emit with a custom timestamp', function(done) {
+    runServer({}, function(server, finish) {
       var s = new sender.FluentSender('debug', {port: server.port});
       var timestamp = new Date(2222, 12, 4);
       var timestamp_seconds_since_epoch = Math.floor(timestamp.getTime() / 1000);
@@ -142,8 +142,8 @@ describe('FluentSender', function(){
     });
   });
 
-  it('should allow to emit with a custom numeric timestamp', function(done){
-    runServer({}, function(server, finish){
+  it('should allow to emit with a custom numeric timestamp', function(done) {
+    runServer({}, function(server, finish) {
       var s = new sender.FluentSender('debug', {port: server.port});
       var timestamp = Math.floor(new Date().getTime() / 1000);
 
@@ -171,16 +171,16 @@ describe('FluentSender', function(){
     });
   });
 
-  it('should resume the connection automatically and flush the queue', function(done){
+  it('should resume the connection automatically and flush the queue', function(done) {
     var s = new sender.FluentSender('debug');
     s.emit('1st record', { message: '1st data' });
-    s.on('error', function(err){
+    s.on('error', function(err) {
       expect(err.code).to.be.equal('ECONNREFUSED');
-      runServer({}, function(server, finish){
+      runServer({}, function(server, finish) {
         s.port = server.port;
         s.emit('2nd record', { message: '2nd data' });
-        s.end('last record', { message: 'last data' }, function(){
-          finish(function(data){
+        s.end('last record', { message: 'last data' }, function() {
+          finish(function(data) {
             expect(data[0].tag).to.be.equal('debug.1st record');
             expect(data[0].data.message).to.be.equal('1st data');
             expect(data[1].tag).to.be.equal('debug.2nd record');
@@ -194,19 +194,19 @@ describe('FluentSender', function(){
     });
   });
 
-  it('should reconnect when fluentd close the client socket suddenly', function(done){
-    runServer({}, function(server, finish){
+  it('should reconnect when fluentd close the client socket suddenly', function(done) {
+    runServer({}, function(server, finish) {
       var s = new sender.FluentSender('debug', {port: server.port});
-      s.emit('foo', 'bar', function(){
+      s.emit('foo', 'bar', function() {
         // connected
-        server.close(function(){
+        server.close(function() {
           // waiting for the server closing all client socket.
-          (function waitForUnwritable(){
-            if( !(s._socket && s._socket.writable) ){
-              runServer({}, function(_server2, finish){
+          (function waitForUnwritable() {
+            if( !(s._socket && s._socket.writable) ) {
+              runServer({}, function(_server2, finish) {
                 s.port = _server2.port;   // in actuall case, s.port does not need to be updated.
-                s.emit('bar', { message: 'hoge' }, function(){
-                  finish(function(data){
+                s.emit('bar', { message: 'hoge' }, function() {
+                  finish(function(data) {
                     expect(data[0].tag).to.be.equal('debug.bar');
                     expect(data[0].data.message).to.be.equal('hoge');
                     done();
@@ -214,7 +214,7 @@ describe('FluentSender', function(){
                 });
               });
             }else{
-              setTimeout(function(){
+              setTimeout(function() {
                 waitForUnwritable();
               }, 100);
             }
@@ -231,16 +231,16 @@ describe('FluentSender', function(){
         requireAckResponse: true
       });
       var emits = [];
-      function emit(k){
-        emits.push(function(done){ s1.emit('record', k, done); });
+      function emit(k) {
+        emits.push(function(done) { s1.emit('record', k, done); });
       }
       for (var i=0; i<10; i++) {
         emit({ number: i });
       }
-      emits.push(function(){
-        finish(function(data){
+      emits.push(function() {
+        finish(function(data) {
           expect(data.length).to.be.equal(10);
-          for(var i=0; i<10; i++){
+          for(var i=0; i<10; i++) {
             expect(data[i].tag).to.be.equal('debug.record');
             expect(data[i].data.number).to.be.equal(i);
             expect(data[i].options.chunk).to.be.equal(server.messages[i].options.chunk);
@@ -270,7 +270,7 @@ describe('FluentSender', function(){
     });
   });
 
-  it('should set error handler', function(done){
+  it('should set error handler', function(done) {
     var s = new sender.FluentSender('debug', {
       reconnectInterval: 100
     });
@@ -340,7 +340,7 @@ describe('FluentSender', function(){
 
     {
       name: 'record and callback',
-      args: [{ bar: 1 }, function cb(){ cb.called = true; }],
+      args: [{ bar: 1 }, function cb() { cb.called = true; }],
       expect: {
         tag: 'debug',
         data: { bar: 1 }
@@ -349,7 +349,7 @@ describe('FluentSender', function(){
 
     {
       name: 'record, time and callback',
-      args: [{ bar: 1 }, 12345, function cb(){ cb.called = true; }],
+      args: [{ bar: 1 }, 12345, function cb() { cb.called = true; }],
       expect: {
         tag: 'debug',
         data: { bar: 1 },
@@ -367,12 +367,12 @@ describe('FluentSender', function(){
       }
     }
   ].forEach(function(testCase) {
-    it('should send records with '+testCase.name+' arguments', function(done){
-      runServer({}, function(server, finish){
+    it('should send records with '+testCase.name+' arguments', function(done) {
+      runServer({}, function(server, finish) {
         var s1 = new sender.FluentSender('debug', { port: server.port });
         s1.emit.apply(s1, testCase.args);
 
-        finish(function(data){
+        finish(function(data) {
           expect(data[0].tag).to.be.equal(testCase.expect.tag);
           expect(data[0].data).to.be.deep.equal(testCase.expect.data);
           if (testCase.expect.time) {
@@ -431,12 +431,12 @@ describe('FluentSender', function(){
       }
     }
   ].forEach(function(testCase) {
-    it('should send records with '+testCase.name+' arguments without a default tag', function(done){
-      runServer({}, function(server, finish){
+    it('should send records with '+testCase.name+' arguments without a default tag', function(done) {
+      runServer({}, function(server, finish) {
         var s1 = new sender.FluentSender(null, { port: server.port });
         s1.emit.apply(s1, testCase.args);
 
-        finish(function(data){
+        finish(function(data) {
           expect(data[0].tag).to.be.equal(testCase.expect.tag);
           expect(data[0].data).to.be.deep.equal(testCase.expect.data);
           if (testCase.expect.time) {
@@ -469,12 +469,12 @@ describe('FluentSender', function(){
 
     {
       name: 'record and callback',
-      args: [{ bar: 1 }, function cb(){ cb.called = true; }]
+      args: [{ bar: 1 }, function cb() { cb.called = true; }]
     },
 
     {
       name: 'record, time and callback',
-      args: [{ bar: 1 }, 12345, function cb(){ cb.called = true; }]
+      args: [{ bar: 1 }, 12345, function cb() { cb.called = true; }]
     },
 
     {
@@ -482,15 +482,15 @@ describe('FluentSender', function(){
       args: [{ bar: 1 }, new Date(1384434467952)]
     }
   ].forEach(function(testCase) {
-    it('should not send records with '+testCase.name+' arguments without a default tag', function(done){
-      runServer({}, function(server, finish){
+    it('should not send records with '+testCase.name+' arguments without a default tag', function(done) {
+      runServer({}, function(server, finish) {
         var s1 = new sender.FluentSender(null, { port: server.port });
         s1.on('error', function(error) {
           expect(error.name).to.be.equal('MissingTagError');
         });
         s1.emit.apply(s1, testCase.args);
 
-        finish(function(data){
+        finish(function(data) {
           expect(data.length).to.be.equal(0);
           testCase.args.forEach(function(arg) {
             if (typeof arg === 'function') {
@@ -519,7 +519,7 @@ describe('FluentSender', function(){
     });
   });
 
-  it('should set max listeners', function(done){
+  it('should set max listeners', function(done) {
     var s = new sender.FluentSender('debug');
     if (EventEmitter.prototype.getMaxListeners) {
       expect(s.getMaxListeners()).to.be.equal(10);
@@ -534,13 +534,13 @@ describe('FluentSender', function(){
   });
 
   // Internal behavior test.
-  it('should not flush queue if existing connection is unavailable.', function(done){
-    runServer({}, function(server, finish){
+  it('should not flush queue if existing connection is unavailable.', function(done) {
+    runServer({}, function(server, finish) {
       var s = new sender.FluentSender('debug', {port: server.port});
-      s.emit('1st record', { message: '1st data' }, function(){
+      s.emit('1st record', { message: '1st data' }, function() {
         s._disconnect();
-        s.emit('2nd record', { message: '2nd data' }, function(){
-          finish(function(data){
+        s.emit('2nd record', { message: '2nd data' }, function() {
+          finish(function(data) {
             expect(data[0].tag).to.be.equal('debug.1st record');
             expect(data[0].data.message).to.be.equal('1st data');
             expect(data[1].tag).to.be.equal('debug.2nd record');

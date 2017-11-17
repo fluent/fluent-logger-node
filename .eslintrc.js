@@ -30,6 +30,12 @@ module.exports = {
     "brace-style": [
       "error"
     ],
+    "block-spacing": [
+      "error"
+    ],
+    "space-before-blocks": [
+      "error"
+    ],
     "no-unused-vars": [
       "error", {
         "varsIgnorePattern": "^_",
