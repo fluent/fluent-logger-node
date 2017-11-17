@@ -3,7 +3,8 @@
   "version": "2.6.1",
   "main": "./lib/index.js",
   "scripts": {
-    "test": "mocha -t 10000 --recursive"
+    "test": "mocha -t 10000 --recursive",
+    "lint": "eslint ."
   },
   "author": {
     "name": "Yohei Sasaki",
@@ -36,7 +37,9 @@
     "async": "",
     "chai": "",
     "mocha": "",
-    "winston": ""
+    "winston": "",
+    "eslint": "^4.11.0",
+    "eslint-plugin-node": ""
   },
   "license": "Apache-2.0",
   "keywords": [
