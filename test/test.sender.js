@@ -33,13 +33,13 @@ describe('FluentSender', function() {
       function emit(k) {
         emits.push(function(done) { s1.emit('record', k, done); });
       }
-      for(var i=0; i<10; i++) {
+      for (var i=0; i<10; i++) {
         emit({ number: i });
       }
       emits.push(function() {
         finish(function(data) {
           expect(data.length).to.be.equal(10);
-          for(var i=0; i<10; i++) {
+          for (var i=0; i<10; i++) {
             expect(data[i].tag).to.be.equal('debug.record');
             expect(data[i].data.number).to.be.equal(i);
           }
@@ -202,7 +202,7 @@ describe('FluentSender', function() {
         server.close(function() {
           // waiting for the server closing all client socket.
           (function waitForUnwritable() {
-            if( !(s._socket && s._socket.writable) ) {
+            if ( !(s._socket && s._socket.writable) ) {
               runServer({}, function(_server2, finish) {
                 s.port = _server2.port;   // in actuall case, s.port does not need to be updated.
                 s.emit('bar', { message: 'hoge' }, function() {
@@ -213,7 +213,7 @@ describe('FluentSender', function() {
                   });
                 });
               });
-            }else{
+            } else {
               setTimeout(function() {
                 waitForUnwritable();
               }, 100);
@@ -240,7 +240,7 @@ describe('FluentSender', function() {
       emits.push(function() {
         finish(function(data) {
           expect(data.length).to.be.equal(10);
-          for(var i=0; i<10; i++) {
+          for (var i=0; i<10; i++) {
             expect(data[i].tag).to.be.equal('debug.record');
             expect(data[i].data.number).to.be.equal(i);
             expect(data[i].options.chunk).to.be.equal(server.messages[i].options.chunk);

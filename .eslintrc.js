@@ -36,6 +36,9 @@ module.exports = {
     "space-before-blocks": [
       "error"
     ],
+    "keyword-spacing": [
+      "error"
+    ],
     "no-unused-vars": [
       "error", {
         "varsIgnorePattern": "^_",
