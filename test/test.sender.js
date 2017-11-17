@@ -16,7 +16,7 @@ codec.addExtUnpacker(0x00, EventTime.unpack);
 describe('FluentSender', function(){
   it('should throw error', (done) => {
     try {
-      let s = new sender.FluentSender('debug', { eventMode: 'Unknown' });
+      new sender.FluentSender('debug', { eventMode: 'Unknown' });
     } catch (e) {
       expect(e.message).to.be.equal('Unknown event mode: Unknown');
       done();
