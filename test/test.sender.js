@@ -13,7 +13,7 @@ var codec = msgpack.createCodec();
 codec.addExtPacker(0x00, EventTime, EventTime.pack);
 codec.addExtUnpacker(0x00, EventTime.unpack);
 
-describe("FluentSender", function(){
+describe('FluentSender', function(){
   it('should throw error', (done) => {
     try {
       let s = new sender.FluentSender('debug', { eventMode: 'Unknown' });
@@ -37,7 +37,7 @@ describe("FluentSender", function(){
         finish(function(data){
           expect(data.length).to.be.equal(10);
           for(var i=0; i<10; i++){
-            expect(data[i].tag).to.be.equal("debug.record");
+            expect(data[i].tag).to.be.equal('debug.record');
             expect(data[i].data.number).to.be.equal(i);
           }
           done();
@@ -54,7 +54,7 @@ describe("FluentSender", function(){
       s.on('connect', function() {
         called = true;
       });
-      s.emit({message: "1st message"}, function() {
+      s.emit({message: '1st message'}, function() {
         finish(function(data) {
           expect(called).to.equal(true);
           done();
@@ -130,7 +130,7 @@ describe("FluentSender", function(){
       var timestamp = new Date(2222, 12, 4);
       var timestamp_seconds_since_epoch = Math.floor(timestamp.getTime() / 1000);
 
-      s.emit("1st record", { message: "1st data" }, timestamp, function() {
+      s.emit('1st record', { message: '1st data' }, timestamp, function() {
         finish(function(data) {
           expect(data[0].time).to.be.equal(timestamp_seconds_since_epoch);
           done();
@@ -144,7 +144,7 @@ describe("FluentSender", function(){
       var s = new sender.FluentSender('debug', {port: server.port});
       var timestamp = Math.floor(new Date().getTime() / 1000);
 
-      s.emit("1st record", { message: "1st data" }, timestamp, function() {
+      s.emit('1st record', { message: '1st data' }, timestamp, function() {
         finish(function(data) {
           expect(data[0].time).to.be.equal(timestamp);
           done();
@@ -238,7 +238,7 @@ describe("FluentSender", function(){
         finish(function(data){
           expect(data.length).to.be.equal(10);
           for(var i=0; i<10; i++){
-            expect(data[i].tag).to.be.equal("debug.record");
+            expect(data[i].tag).to.be.equal('debug.record');
             expect(data[i].data.number).to.be.equal(i);
             expect(data[i].options.chunk).to.be.equal(server.messages[i].options.chunk);
           }
@@ -377,8 +377,8 @@ describe("FluentSender", function(){
           }
 
           testCase.args.forEach(function(arg) {
-            if (typeof arg === "function") {
-              expect(arg.called, "callback must be called").to.be.true;
+            if (typeof arg === 'function') {
+              expect(arg.called, 'callback must be called').to.be.true;
             }
           });
 
@@ -441,8 +441,8 @@ describe("FluentSender", function(){
           }
 
           testCase.args.forEach(function(arg) {
-            if (typeof arg === "function") {
-              expect(arg.called, "callback must be called").to.be.true;
+            if (typeof arg === 'function') {
+              expect(arg.called, 'callback must be called').to.be.true;
             }
           });
 
@@ -490,8 +490,8 @@ describe("FluentSender", function(){
         finish(function(data){
           expect(data.length).to.be.equal(0);
           testCase.args.forEach(function(arg) {
-            if (typeof arg === "function") {
-              expect(arg.called, "callback must be called").to.be.true;
+            if (typeof arg === 'function') {
+              expect(arg.called, 'callback must be called').to.be.true;
             }
           });
 
@@ -538,10 +538,10 @@ describe("FluentSender", function(){
         s._disconnect();
         s.emit('2nd record', { message: '2nd data' }, function(){
           finish(function(data){
-            expect(data[0].tag).to.be.equal("debug.1st record");
-            expect(data[0].data.message).to.be.equal("1st data");
-            expect(data[1].tag).to.be.equal("debug.2nd record");
-            expect(data[1].data.message).to.be.equal("2nd data");
+            expect(data[0].tag).to.be.equal('debug.1st record');
+            expect(data[0].data.message).to.be.equal('1st data');
+            expect(data[1].tag).to.be.equal('debug.2nd record');
+            expect(data[1].data.message).to.be.equal('2nd data');
             done();
           });
         });

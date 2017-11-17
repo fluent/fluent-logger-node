@@ -5,7 +5,7 @@ var winstonSupport = require('../lib/winston');
 var winston = require('winston');
 var runServer = require('../lib/testHelper').runServer;
 
-describe("winston", function(){
+describe('winston', function(){
   describe('name', function(){
     it('should be "fluent"', function(done){
       expect((new (winstonSupport.Transport)()).name).to.be.equal('fluent');
