@@ -36,7 +36,9 @@
     "async": "",
     "chai": "",
     "mocha": "",
-    "winston": ""
+    "winston": "",
+    "eslint": "^4.11.0",
+    "eslint-plugin-node": ""
   },
   "license": "Apache-2.0",
   "keywords": [

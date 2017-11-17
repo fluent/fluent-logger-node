@@ -1,4 +1,5 @@
 'use strict';
+/* globals describe, it */
 var expect = require('chai').expect;
 var sender = require('../lib/sender');
 var EventTime = require('../lib/event-time').EventTime;
