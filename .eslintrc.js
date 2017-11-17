@@ -45,6 +45,9 @@ module.exports = {
     "space-infix-ops": [
       "error"
     ],
+    "space-unary-ops": [
+      "error"
+    ],
     "no-unused-vars": [
       "error", {
         "varsIgnorePattern": "^_",
