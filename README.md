@@ -158,8 +158,15 @@ var logger = new (winston.Logger)({
     transports: [new fluentTransport('mytag', config), new (winston.transports.Console)()]
 });
 
+logger.on('logging', (transport, level, message, meta) => {
+  if (meta.end && transport.sender && transport.sender.end) {
+    transport.sender.end();
+  }
+});
+
 logger.log('info', 'this log record is sent to fluent daemon');
 logger.info('this log record is sent to fluent daemon');
+logger.info('end of log message', { end: true });
 ```
 
 ### stream
