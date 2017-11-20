@@ -128,10 +128,10 @@ var logger = require('fluent-logger').createFluentSender('tag_prefix', {
    timeout: 3.0,
    reconnectInterval: 600000 // 10 minutes
 });
-logger.on('error', function(error) {
+logger.on('error', (error) => {
   console.log(error);
 });
-logger.on('connect', function() {
+logger.on('connect', () => {
   console.log('connected!');
 });
 ```
