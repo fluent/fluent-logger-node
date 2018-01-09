@@ -174,6 +174,8 @@ logger.info('end of log message', { end: true });
 Several libraries use stream as output.
 
 ```js
+'use strict';
+const Console = require('console').Console;
 var sender = require('fluent-logger').createFluentSender('tag_prefix', {
    host: 'localhost',
    port: 24224,
@@ -182,6 +184,7 @@ var sender = require('fluent-logger').createFluentSender('tag_prefix', {
 });
 var logger = new Console(sender.toStream('stdout'), sender.toStream('stderr'));
 logger.log('this log record is sent to fluent daemon');
+setTimeout(()=> sender.end(), 5000);
 ```
 
 
