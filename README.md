@@ -151,7 +151,8 @@ var winston = require('winston');
 var config = {
   host: 'localhost',
   port: 24224,
-  timeout: 3.0
+  timeout: 3.0,
+  requireAckResponse: true // Add this option to wait response from Fluentd certainly
 };
 var fluentTransport = require('fluent-logger').support.winstonTransport();
 var logger = new (winston.Logger)({
