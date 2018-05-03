@@ -39,7 +39,8 @@
     "mocha": "",
     "winston": "",
     "eslint": "^4.11.0",
-    "eslint-plugin-node": ""
+    "eslint-plugin-node": "",
+    "selfsigned": ""
   },
   "license": "Apache-2.0",
   "keywords": [

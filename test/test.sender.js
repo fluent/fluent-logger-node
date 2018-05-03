@@ -16,10 +16,19 @@ var codec = msgpack.createCodec();
 codec.addExtPacker(0x00, EventTime, EventTime.pack);
 codec.addExtUnpacker(0x00, EventTime.unpack);
 
-describe('FluentSender', () => {
+let doTest = (tls) => {
+  let serverOptions = {};
+  let clientOptions = {};
+  if (tls) {
+    var selfsigned = require('selfsigned');
+    var attrs = [{ name: 'commonName', value: 'foo.com' }];
+    var pems = selfsigned.generate(attrs, { days: 365 });
+    serverOptions = { tls: true, key: pems.private, cert: pems.cert, ca: pems.cert };
+    clientOptions = { tls: true, tlsOptions: { rejectUnauthorized: false } };
+  }
   it('should throw error', (done) => {
     try {
-      new sender.FluentSender('debug', { eventMode: 'Unknown' });
+      new sender.FluentSender('debug', Object.assign({}, clientOptions, { eventMode: 'Unknown' }));
     } catch (e) {
       expect(e.message).to.be.equal('Unknown event mode: Unknown');
       done();
@@ -27,8 +36,8 @@ describe('FluentSender', () => {
   });
 
   it('should send records', (done) => {
-    runServer({}, (server, finish) => {
-      var s1 = new sender.FluentSender('debug', { port: server.port });
+    runServer({}, serverOptions, (server, finish) => {
+      var s1 = new sender.FluentSender('debug', Object.assign({}, clientOptions, { port: server.port }));
       var emits = [];
       function emit(k) {
         emits.push((done) => { s1.emit('record', k, done); });
@@ -51,8 +60,8 @@ describe('FluentSender', () => {
   });
 
   it('should emit connect event', (done) => {
-    runServer({}, (server, finish) => {
-      var s = new sender.FluentSender('debug', {port: server.port});
+    runServer({}, serverOptions, (server, finish) => {
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, {port: server.port}));
       var called = false;
       s.on('connect', () => {
         called = true;
@@ -67,10 +76,10 @@ describe('FluentSender', () => {
   });
 
   it('should raise error when connection fails', (done) => {
-    var s = new sender.FluentSender('debug', {
+    var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, {
       host: 'localhost',
       port: 65535
-    });
+    }));
     s.on('error', (err) => {
       expect(err.code).to.be.equal('ECONNREFUSED');
       done();
@@ -91,11 +100,11 @@ describe('FluentSender', () => {
         this.buffer.error.push(message);
       }
     };
-    var s = new sender.FluentSender('debug', {
+    var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, {
       host: 'localhost',
       port: 65535,
       internalLogger: logger
-    });
+    }));
     s._setupErrorHandler((timeoutId) => {
       expect(logger.buffer.info).to.have.lengthOf(1);
       expect(logger.buffer.info[0]).to.be.equal('Fluentd will reconnect after 600 seconds');
@@ -109,8 +118,8 @@ describe('FluentSender', () => {
 
 
   it('should assure the sequence.', (done) => {
-    runServer({}, (server, finish) => {
-      var s = new sender.FluentSender('debug', {port: server.port});
+    runServer({}, serverOptions, (server, finish) => {
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, {port: server.port}));
       s.emit('1st record', { message: '1st data' });
       s.emit('2nd record', { message: '2nd data' });
       s.end('last record', { message: 'last data' }, () => {
@@ -128,8 +137,8 @@ describe('FluentSender', () => {
   });
 
   it('should allow to emit with a custom timestamp', (done) => {
-    runServer({}, (server, finish) => {
-      var s = new sender.FluentSender('debug', {port: server.port});
+    runServer({}, serverOptions, (server, finish) => {
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, {port: server.port}));
       var timestamp = new Date(2222, 12, 4);
       var timestamp_seconds_since_epoch = Math.floor(timestamp.getTime() / 1000);
 
@@ -143,8 +152,8 @@ describe('FluentSender', () => {
   });
 
   it('should allow to emit with a custom numeric timestamp', (done) => {
-    runServer({}, (server, finish) => {
-      var s = new sender.FluentSender('debug', {port: server.port});
+    runServer({}, serverOptions, (server, finish) => {
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, {port: server.port}));
       var timestamp = Math.floor(new Date().getTime() / 1000);
 
       s.emit('1st record', { message: '1st data' }, timestamp, () => {
@@ -157,8 +166,8 @@ describe('FluentSender', () => {
   });
 
   it('should allow to emit with a EventTime', (done) => {
-    runServer({}, (server, finish) => {
-      var s = new sender.FluentSender('debug', {port: server.port});
+    runServer({}, serverOptions, (server, finish) => {
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, {port: server.port}));
       var eventTime = EventTime.now();
 
       s.emit('1st record', { message: '1st data' }, eventTime, () => {
@@ -172,11 +181,11 @@ describe('FluentSender', () => {
   });
 
   it('should resume the connection automatically and flush the queue', (done) => {
-    var s = new sender.FluentSender('debug');
+    var s = new sender.FluentSender('debug', clientOptions);
     s.emit('1st record', { message: '1st data' });
     s.on('error', (err) => {
       expect(err.code).to.be.equal('ECONNREFUSED');
-      runServer({}, (server, finish) => {
+      runServer({}, serverOptions, (server, finish) => {
         s.port = server.port;
         s.emit('2nd record', { message: '2nd data' });
         s.end('last record', { message: 'last data' }, () => {
@@ -195,15 +204,15 @@ describe('FluentSender', () => {
   });
 
   it('should reconnect when fluentd close the client socket suddenly', (done) => {
-    runServer({}, (server, finish) => {
-      var s = new sender.FluentSender('debug', {port: server.port});
+    runServer({}, serverOptions, (server, finish) => {
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, {port: server.port}));
       s.emit('foo', 'bar', () => {
         // connected
         server.close(() => {
           // waiting for the server closing all client socket.
           (function waitForUnwritable() {
             if (!(s._socket && s._socket.writable)) {
-              runServer({}, (_server2, finish) => {
+              runServer({}, serverOptions, (_server2, finish) => {
                 s.port = _server2.port;   // in actuall case, s.port does not need to be updated.
                 s.emit('bar', { message: 'hoge' }, () => {
                   finish((data) => {
@@ -225,11 +234,11 @@ describe('FluentSender', () => {
   });
 
   it('should send records with requireAckResponse', (done) => {
-    runServer({requireAckResponse: true}, (server, finish) => {
-      var s1 = new sender.FluentSender('debug', {
+    runServer({requireAckResponse: true}, serverOptions, (server, finish) => {
+      var s1 = new sender.FluentSender('debug', Object.assign({}, clientOptions, {
         port: server.port,
         requireAckResponse: true
-      });
+      }));
       var emits = [];
       function emit(k) {
         emits.push((done) => { s1.emit('record', k, done); });
@@ -253,12 +262,12 @@ describe('FluentSender', () => {
   });
 
   it('should send records ackResponseTimeout', (done) => {
-    runServer({requireAckResponse: false }, (server, finish) => {
-      var s1 = new sender.FluentSender('debug', {
+    runServer({requireAckResponse: false }, serverOptions, (server, finish) => {
+      var s1 = new sender.FluentSender('debug', Object.assign({}, clientOptions, {
         port: server.port,
         requireAckResponse: false,
         ackResponseTimeout: 1000
-      });
+      }));
       s1.on('response-timeout', (error) => {
         expect(error).to.be.equal('ack response timeout');
       });
@@ -271,9 +280,9 @@ describe('FluentSender', () => {
   });
 
   it('should set error handler', (done) => {
-    var s = new sender.FluentSender('debug', {
+    var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, {
       reconnectInterval: 100
-    });
+    }));
     expect(s._eventEmitter.listeners('error').length).to.be.equal(0);
     s._setupErrorHandler();
     expect(s._eventEmitter.listeners('error').length).to.be.equal(1);
@@ -368,8 +377,8 @@ describe('FluentSender', () => {
     }
   ].forEach((testCase) => {
     it('should send records with ' + testCase.name + ' arguments', (done) => {
-      runServer({}, (server, finish) => {
-        var s1 = new sender.FluentSender('debug', { port: server.port });
+      runServer({}, serverOptions, (server, finish) => {
+        var s1 = new sender.FluentSender('debug', Object.assign({}, clientOptions, { port: server.port }));
         s1.emit.apply(s1, testCase.args);
 
         finish((data) => {
@@ -432,8 +441,8 @@ describe('FluentSender', () => {
     }
   ].forEach((testCase) => {
     it('should send records with ' + testCase.name + ' arguments without a default tag', (done) => {
-      runServer({}, (server, finish) => {
-        var s1 = new sender.FluentSender(null, { port: server.port });
+      runServer({}, serverOptions, (server, finish) => {
+        var s1 = new sender.FluentSender(null, Object.assign({}, clientOptions, { port: server.port }));
         s1.emit.apply(s1, testCase.args);
 
         finish((data) => {
@@ -483,8 +492,8 @@ describe('FluentSender', () => {
     }
   ].forEach((testCase) => {
     it('should not send records with ' + testCase.name + ' arguments without a default tag', (done) => {
-      runServer({}, (server, finish) => {
-        var s1 = new sender.FluentSender(null, { port: server.port });
+      runServer({}, serverOptions, (server, finish) => {
+        var s1 = new sender.FluentSender(null, Object.assign({}, clientOptions, { port: server.port }));
         s1.on('error', (error) => {
           expect(error.name).to.be.equal('MissingTagError');
         });
@@ -506,8 +515,8 @@ describe('FluentSender', () => {
   });
 
   it('should not send records is not object', (done) => {
-    runServer({}, (server, finish) => {
-      var s1 = new sender.FluentSender(null, { port: server.port });
+    runServer({}, serverOptions, (server, finish) => {
+      var s1 = new sender.FluentSender(null, Object.assign({}, clientOptions, { port: server.port }));
       s1.on('error', (error) => {
         expect(error.name).to.be.equal('DataTypeError');
       });
@@ -520,7 +529,7 @@ describe('FluentSender', () => {
   });
 
   it('should set max listeners', (done) => {
-    var s = new sender.FluentSender('debug');
+    var s = new sender.FluentSender('debug', clientOptions);
     if (EventEmitter.prototype.getMaxListeners) {
       expect(s.getMaxListeners()).to.be.equal(10);
     }
@@ -535,8 +544,8 @@ describe('FluentSender', () => {
 
   // Internal behavior test.
   it('should not flush queue if existing connection is unavailable.', (done) => {
-    runServer({}, (server, finish) => {
-      var s = new sender.FluentSender('debug', {port: server.port});
+    runServer({}, serverOptions, (server, finish) => {
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, {port: server.port}));
       s.emit('1st record', { message: '1st data' }, () => {
         s._disconnect();
         s.emit('2nd record', { message: '2nd data' }, () => {
@@ -553,8 +562,8 @@ describe('FluentSender', () => {
   });
 
   it('should write stream.', (done) => {
-    runServer({}, (server, finish) => {
-      var s = new sender.FluentSender('debug', { port: server.port });
+    runServer({}, serverOptions, (server, finish) => {
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, { port: server.port }));
       var ss = s.toStream('record');
       var pt = new stream.PassThrough();
       pt.pipe(ss);
@@ -577,13 +586,13 @@ describe('FluentSender', () => {
   });
 
   it('should process messages step by step on requireAckResponse=true', (done) => {
-    runServer({ requireAckResponse: true }, (server, finish) => {
-      var s = new sender.FluentSender('debug', {
+    runServer({ requireAckResponse: true }, serverOptions, (server, finish) => {
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, {
         port: server.port,
         timeout: 3.0,
         reconnectInterval: 600000,
         requireAckResponse: true
-      });
+      }));
       var errors = [];
       s.on('error', (err) => {
         errors.push(count + ': ' + err);
@@ -609,7 +618,7 @@ describe('FluentSender', () => {
   });
 
   it('should process entries when using PackedForward Mode', (done) => {
-    runServer({}, (server, finish) => {
+    runServer({}, serverOptions, (server, finish) => {
       let loggerOptions = {
         port: server.port,
         eventMode: 'PackedForward',
@@ -618,7 +627,7 @@ describe('FluentSender', () => {
           error: () => {}
         }
       };
-      var s = new sender.FluentSender('debug', loggerOptions);
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, loggerOptions));
       s.emit('test', { message: 'This is test 0' });
       s.end('test', { message: 'This is test 1' });
       setTimeout(() => {
@@ -635,7 +644,7 @@ describe('FluentSender', () => {
   });
 
   it('should compress entries when using CompressedPackedForward Mode', (done) => {
-    runServer({}, (server, finish) => {
+    runServer({}, serverOptions, (server, finish) => {
       let loggerOptions = {
         port: server.port,
         eventMode: 'CompressedPackedForward',
@@ -644,7 +653,7 @@ describe('FluentSender', () => {
           error: () => {}
         }
       };
-      var s = new sender.FluentSender('debug', loggerOptions);
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, loggerOptions));
       s.emit('test', { message: 'This is test 0' });
       s.emit('test', { message: 'This is test 1' });
       setTimeout(() => {
@@ -668,7 +677,7 @@ describe('FluentSender', () => {
         sharedKey: sharedKey
       }
     };
-    runServer(options, (server, finish) => {
+    runServer(options, serverOptions, (server, finish) => {
       let loggerOptions = {
         port: server.port,
         security: {
@@ -680,7 +689,7 @@ describe('FluentSender', () => {
           error: () => {}
         }
       };
-      var s = new sender.FluentSender('debug', loggerOptions);
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, loggerOptions));
       s.emit('test', { message: 'This is test 0' });
       s.emit('test', { message: 'This is test 1' });
       finish((data) => {
@@ -702,7 +711,7 @@ describe('FluentSender', () => {
         sharedKey: sharedKey
       }
     };
-    runServer(options, (server, finish) => {
+    runServer(options, serverOptions, (server, finish) => {
       let loggerOptions = {
         port: server.port,
         security: {
@@ -714,7 +723,7 @@ describe('FluentSender', () => {
           error: () => {}
         }
       };
-      var s = new sender.FluentSender('debug', loggerOptions);
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, loggerOptions));
       s.on('error', (error) => {
         expect(error.message).to.be.equal('Authentication failed: shared key mismatch');
       });
@@ -736,7 +745,7 @@ describe('FluentSender', () => {
         password: 'password'
       }
     };
-    runServer(options, (server, finish) => {
+    runServer(options, serverOptions, (server, finish) => {
       let loggerOptions = {
         port: server.port,
         security: {
@@ -750,7 +759,7 @@ describe('FluentSender', () => {
           error: () => {}
         }
       };
-      var s = new sender.FluentSender('debug', loggerOptions);
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, loggerOptions));
       s.emit('test', { message: 'This is test 0' });
       s.emit('test', { message: 'This is test 1' });
       finish((data) => {
@@ -774,7 +783,7 @@ describe('FluentSender', () => {
         password: 'password'
       }
     };
-    runServer(options, (server, finish) => {
+    runServer(options, serverOptions, (server, finish) => {
       let loggerOptions = {
         port: server.port,
         security: {
@@ -788,7 +797,7 @@ describe('FluentSender', () => {
           error: () => {}
         }
       };
-      var s = new sender.FluentSender('debug', loggerOptions);
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, loggerOptions));
       s.on('error', (error) => {
         expect(error.message).to.be.equal('Authentication failed: username/password mismatch');
       });
@@ -809,7 +818,7 @@ describe('FluentSender', () => {
       },
       checkPing: (data) => { return { succeeded: false, reason: 'reason', sharedKeySalt: null }; }
     };
-    runServer(options, (server, finish) => {
+    runServer(options, serverOptions, (server, finish) => {
       let loggerOptions = {
         port: server.port,
         security: {
@@ -821,7 +830,7 @@ describe('FluentSender', () => {
           error: () => {}
         }
       };
-      var s = new sender.FluentSender('debug', loggerOptions);
+      var s = new sender.FluentSender('debug', Object.assign({}, clientOptions, loggerOptions));
       s.on('error', (err) => {
         expect(err.message).to.be.equal('Authentication failed: reason');
       });
@@ -832,4 +841,12 @@ describe('FluentSender', () => {
       });
     });
   });
+};
+
+describe('FluentSender', () => {
+  doTest();
+});
+
+describe('FluentSenderWithTLS', () => {
+  doTest(true);
 });
