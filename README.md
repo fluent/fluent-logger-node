@@ -276,6 +276,10 @@ Enable TLS for socket.
 
 Options to pass to tls.connect when tls is true.
 
+For more details, see following documents
+* [tls.connect()](https://nodejs.org/api/tls.html#tls_tls_connect_options_callback)
+* [tls.createSecureContext()](https://nodejs.org/api/tls.html#tls_tls_createsecurecontext_options)
+
 **internalLogger**
 
 Set internal logger object for FluentLogger. Use `console` by default.
