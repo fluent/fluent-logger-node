@@ -268,6 +268,14 @@ Set username for user based authentication. Default values is empty string.
 
 Set password for user based authentication. Default values is empty string.
 
+**tls**
+
+Enable TLS for socket.
+
+**tlsOptions**
+
+Options to pass to tls.connect when tls is true.
+
 **internalLogger**
 
 Set internal logger object for FluentLogger. Use `console` by default.

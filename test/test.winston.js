@@ -17,7 +17,7 @@ describe('winston', () => {
   describe('transport', () => {
 
     it('should send log records', (done) => {
-      runServer({}, (server, finish) => {
+      runServer({}, {}, (server, finish) => {
         var logger = new (winston.Logger)({
           transports: [
             new (winstonSupport.Transport)('debug', {port: server.port})
