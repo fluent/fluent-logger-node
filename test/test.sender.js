@@ -637,6 +637,7 @@ let doTest = (tls) => {
           expect(data[0].data.message).to.be.equal('This is test 0');
           expect(data[1].tag).to.be.equal('debug.test');
           expect(data[1].data.message).to.be.equal('This is test 1');
+          expect(s._sendQueueSize).to.be.equal(0);
           done();
         });
       }, 200);
@@ -663,6 +664,7 @@ let doTest = (tls) => {
           expect(data[0].data.message).to.be.equal('This is test 0');
           expect(data[1].tag).to.be.equal('debug.test');
           expect(data[1].data.message).to.be.equal('This is test 1');
+          expect(s._sendQueueSize).to.be.equal(0);
           done();
         });
       }, 200);
