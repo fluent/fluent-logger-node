@@ -2,7 +2,7 @@
 /* globals describe, it */
 /* eslint node/no-unpublished-require: ["error", {"allowModules": ["chai"]}] */
 var expect = require('chai').expect;
-var EventTime = require('../lib/event-time').EventTime;
+var EventTime = require('../lib/event-time');
 var msgpack = require('msgpack-lite');
 
 var codec = msgpack.createCodec();

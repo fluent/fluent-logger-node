@@ -5,7 +5,7 @@
 /* eslint node/no-unpublished-require: ["error", {"allowModules": ["async", "chai"]}] */
 var expect = require('chai').expect;
 var sender = require('../lib/sender');
-var EventTime = require('../lib/event-time').EventTime;
+var EventTime = require('../lib/event-time');
 var runServer = require('../lib/testHelper').runServer;
 var stream = require('stream');
 var async = require('async');
