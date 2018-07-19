@@ -9,7 +9,7 @@ var runServer = require('../lib/testHelper').runServer;
 describe('winston', () => {
   describe('name', () => {
     it('should be "fluent"', (done) => {
-      expect((new (winstonSupport.Transport)()).name).to.be.equal('fluent');
+      expect((new winstonSupport()).name).to.be.equal('fluent');
       done();
     });
   });
@@ -18,12 +18,15 @@ describe('winston', () => {
 
     it('should send log records', (done) => {
       runServer({}, {}, (server, finish) => {
-        var logger = new (winston.Logger)({
+        var logger = winston.createLogger({
+          format: winston.format.combine(
+            winston.format.splat(),
+            winston.format.simple()
+          ),
           transports: [
-            new (winstonSupport.Transport)('debug', {port: server.port})
+            new winstonSupport({tag: 'debug', port: server.port})
           ]
         });
-
 
         logger.info('foo %s', 'bar', {x: 1});
         setTimeout(() => {
