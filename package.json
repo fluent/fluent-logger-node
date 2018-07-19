@@ -25,7 +25,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "http://github.com/fluent/fluent-logger-node"
+    "url": "https://github.com/fluent/fluent-logger-node"
   },
   "engines": {
     "node": ">=4"
@@ -34,13 +34,13 @@
     "msgpack-lite": "*"
   },
   "devDependencies": {
-    "async": "",
+    "async": "*",
     "chai": "",
-    "mocha": "",
-    "winston": "",
     "eslint": "^4.11.0",
-    "eslint-plugin-node": "",
-    "selfsigned": ""
+    "eslint-plugin-node": "*",
+    "mocha": "*",
+    "selfsigned": "",
+    "winston": "*"
   },
   "license": "Apache-2.0",
   "keywords": [
