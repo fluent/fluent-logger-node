@@ -20,6 +20,7 @@ let doTest = (tls) => {
   let serverOptions = {};
   let clientOptions = {};
   if (tls) {
+    /* eslint-disable-next-line node/no-unpublished-require */
     var selfsigned = require('selfsigned');
     var attrs = [{ name: 'commonName', value: 'foo.com' }];
     var pems = selfsigned.generate(attrs, { days: 365 });
