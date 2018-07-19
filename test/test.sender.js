@@ -3,16 +3,16 @@
 /* eslint brace-style: ["error", "1tbs", {"allowSingleLine": true}] */
 /* eslint no-unused-vars: ["error", {"args": "none"}] */
 /* eslint node/no-unpublished-require: ["error", {"allowModules": ["async", "chai"]}] */
-var expect = require('chai').expect;
-var FluentSender = require('../lib/sender');
-var EventTime = require('../lib/event-time');
-var runServer = require('../lib/testHelper').runServer;
-var stream = require('stream');
-var async = require('async');
-var EventEmitter = require('events').EventEmitter;
-var msgpack = require('msgpack-lite');
+const expect = require('chai').expect;
+const FluentSender = require('../lib/sender');
+const EventTime = require('../lib/event-time');
+const runServer = require('../lib/testHelper').runServer;
+const stream = require('stream');
+const async = require('async');
+const EventEmitter = require('events').EventEmitter;
+const msgpack = require('msgpack-lite');
 
-var codec = msgpack.createCodec();
+const codec = msgpack.createCodec();
 codec.addExtPacker(0x00, EventTime, EventTime.pack);
 codec.addExtUnpacker(0x00, EventTime.unpack);
 
@@ -21,9 +21,9 @@ let doTest = (tls) => {
   let clientOptions = {};
   if (tls) {
     /* eslint-disable-next-line node/no-unpublished-require */
-    var selfsigned = require('selfsigned');
-    var attrs = [{ name: 'commonName', value: 'foo.com' }];
-    var pems = selfsigned.generate(attrs, { days: 365 });
+    const selfsigned = require('selfsigned');
+    const attrs = [{ name: 'commonName', value: 'foo.com' }];
+    const pems = selfsigned.generate(attrs, { days: 365 });
     serverOptions = { tls: true, key: pems.private, cert: pems.cert, ca: pems.cert };
     clientOptions = { tls: true, tlsOptions: { rejectUnauthorized: false } };
   }
