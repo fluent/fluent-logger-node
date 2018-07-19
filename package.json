@@ -34,13 +34,13 @@
     "msgpack-lite": "*"
   },
   "devDependencies": {
-    "async": "",
+    "async": "*",
     "chai": "",
-    "mocha": "",
-    "winston": "",
     "eslint": "^4.11.0",
-    "eslint-plugin-node": "",
-    "selfsigned": ""
+    "eslint-plugin-node": "*",
+    "mocha": "*",
+    "selfsigned": "",
+    "winston": "*"
   },
   "license": "Apache-2.0",
   "keywords": [
