@@ -57,6 +57,9 @@ module.exports = {
         "args": "none"
       }
     ],
+    "no-var": [
+      "error"
+    ],
     "node/exports-style": [
       "error",
       "module.exports"

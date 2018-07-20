@@ -1,10 +1,10 @@
 'use strict';
 /* globals describe, it */
 /* eslint node/no-unpublished-require: ["error", {"allowModules": ["async", "chai", "winston"]}] */
-var expect = require('chai').expect;
-var winstonSupport = require('../lib/winston');
-var winston = require('winston');
-var runServer = require('../lib/testHelper').runServer;
+const expect = require('chai').expect;
+const winstonSupport = require('../lib/winston');
+const winston = require('winston');
+const runServer = require('../lib/testHelper').runServer;
 
 describe('winston', () => {
   describe('name', () => {
@@ -18,7 +18,7 @@ describe('winston', () => {
 
     it('should send log records', (done) => {
       runServer({}, {}, (server, finish) => {
-        var logger = winston.createLogger({
+        const logger = winston.createLogger({
           format: winston.format.combine(
             winston.format.splat(),
             winston.format.simple()

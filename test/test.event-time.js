@@ -1,28 +1,28 @@
 'use strict';
 /* globals describe, it */
 /* eslint node/no-unpublished-require: ["error", {"allowModules": ["chai"]}] */
-var expect = require('chai').expect;
-var EventTime = require('../lib/event-time');
-var msgpack = require('msgpack-lite');
+const expect = require('chai').expect;
+const EventTime = require('../lib/event-time');
+const msgpack = require('msgpack-lite');
 
-var codec = msgpack.createCodec();
+const codec = msgpack.createCodec();
 codec.addExtPacker(0x00, EventTime, EventTime.pack);
 codec.addExtUnpacker(0x00, EventTime.unpack);
 
 describe('EventTime', () => {
   it('should equal to decoded value', (done) => {
-    var eventTime = EventTime.now();
-    var encoded = msgpack.encode(eventTime, { codec: codec });
-    var decoded = msgpack.decode(encoded, { codec: codec });
+    const eventTime = EventTime.now();
+    const encoded = msgpack.encode(eventTime, { codec: codec });
+    const decoded = msgpack.decode(encoded, { codec: codec });
     expect(JSON.stringify(decoded)).to.equal(JSON.stringify(eventTime));
     done();
   });
   it('should equal fromDate and fromTimestamp', (done) => {
-    var now = new Date(1489543720999); // 2017-03-15T02:08:40.999Z
-    var timestamp = now.getTime();
-    var eventTime = JSON.stringify(new EventTime(1489543720, 999000000));
-    var eventTime1 = JSON.stringify(EventTime.fromDate(now));
-    var eventTime2 = JSON.stringify(EventTime.fromTimestamp(timestamp));
+    const now = new Date(1489543720999); // 2017-03-15T02:08:40.999Z
+    const timestamp = now.getTime();
+    const eventTime = JSON.stringify(new EventTime(1489543720, 999000000));
+    const eventTime1 = JSON.stringify(EventTime.fromDate(now));
+    const eventTime2 = JSON.stringify(EventTime.fromTimestamp(timestamp));
     expect(eventTime1).to.equal(eventTime);
     expect(eventTime2).to.equal(eventTime);
     done();
