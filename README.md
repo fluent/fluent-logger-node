@@ -344,4 +344,4 @@ Apache License, Version 2.0.
 
 ## About NodeJS versions
 
-This package is compatible with NodeJS versions > 4.
+This package is compatible with NodeJS versions >= 6.

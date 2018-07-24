@@ -28,7 +28,7 @@
     "url": "https://github.com/fluent/fluent-logger-node"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "dependencies": {
     "msgpack-lite": "*"
@@ -36,7 +36,7 @@
   "devDependencies": {
     "async": "*",
     "chai": "",
-    "eslint": "^4.11.0",
+    "eslint": "^5.1.0",
     "eslint-plugin-node": "*",
     "mocha": "*",
     "selfsigned": "",
