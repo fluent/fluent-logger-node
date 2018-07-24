@@ -218,6 +218,8 @@ logger.info('this log record is sent to fluent daemon');
 logger.info('end of log message', { end: true });
 ```
 
+**NOTE** If you use `winston@2`, you can use `fluent-logger@2.7.0` or earlier. If you use `winston@3`, you can use `fluent-logger@2.8` or later.
+
 ### stream
 
 Several libraries use stream as output.
