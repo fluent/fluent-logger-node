@@ -298,7 +298,7 @@ NOTE: We will change default to `PackedForward` and drop `Message` in next major
 
 **flushInterval**
 
-Set flush interval in milliseconds. This option has no effect in Message mode.
+Set flush interval in milliseconds. This option has no effect in `Message` mode.
 The logger stores emitted events in buffer and flush events for each interval.
 Default `100`.
 
@@ -317,6 +317,10 @@ Set username for user based authentication. Default values is empty string.
 **security.password**
 
 Set password for user based authentication. Default values is empty string.
+
+**sendQueueSizeLimit**
+
+Queue size limit in bytes. This option has no effect in `Message` mode. Default is `8 MiB`.
 
 **tls**
 
