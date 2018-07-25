@@ -35,12 +35,12 @@
   },
   "devDependencies": {
     "async": "*",
-    "chai": "",
+    "chai": "*",
+    "mocha": "*",
+    "winston": "^2.4.3",
     "eslint": "^4.11.0",
     "eslint-plugin-node": "*",
-    "mocha": "*",
-    "selfsigned": "",
-    "winston": "*"
+    "selfsigned": "*"
   },
   "license": "Apache-2.0",
   "keywords": [
