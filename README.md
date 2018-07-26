@@ -318,6 +318,10 @@ Set username for user based authentication. Default values is empty string.
 
 Set password for user based authentication. Default values is empty string.
 
+**sendQueueSizeLimit**
+
+Queue size limit in bytes. This option has no effect in `Message` mode. Default is `8 MiB`.
+
 **tls**
 
 Enable TLS for socket.

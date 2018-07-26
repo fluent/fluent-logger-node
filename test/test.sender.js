@@ -543,6 +543,16 @@ let doTest = (tls) => {
     done();
   });
 
+  it('should set sendQueueSizeLimit', (done) => {
+    const s = new FluentSender('debug', Object.assign({}, clientOptions, {
+      sendQueueSizeLimit: 1000,
+      eventMode: 'PackedForward'
+    }));
+
+    expect(s._sendQueueSizeLimit).to.be.equal(1000);
+    done();
+  });
+
   // Internal behavior test.
   it('should not flush queue if existing connection is unavailable.', (done) => {
     runServer({}, serverOptions, (server, finish) => {
