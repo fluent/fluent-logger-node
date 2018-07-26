@@ -298,7 +298,7 @@ NOTE: We will change default to `PackedForward` and drop `Message` in next major
 
 **flushInterval**
 
-Set flush interval in milliseconds. This option has no effect in Message mode.
+Set flush interval in milliseconds. This option has no effect in `Message` mode.
 The logger stores emitted events in buffer and flush events for each interval.
 Default `100`.
 
