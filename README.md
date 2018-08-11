@@ -339,6 +339,12 @@ For more details, see following documents
 Set internal logger object for FluentLogger. Use `console` by default.
 This logger requires `info` and `error` method.
 
+## Examples
+### Winston Integration
+An example of integrating with Winston can be found at [`./example/winston`](./example/winston).
+
+You will need Docker Compose to run it. After navigating to `./example/winston`, run `docker-compose up` and then `node index.js`. You should see the Docker logs having an `"it works"` message being output to FluentD.
+
 ## License
 
 Apache License, Version 2.0.

@@ -1,0 +1,10 @@
+version: "3.5"
+services:
+  fluentd:
+    image: fluent/fluentd:v1.2.3
+    entrypoint: ["fluentd", "-c", "/etc/fluent/fluent.conf", "-vv"]
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    volumes:
+      - "./data/fluentd.d/fluent.conf:/etc/fluent/fluent.conf"
