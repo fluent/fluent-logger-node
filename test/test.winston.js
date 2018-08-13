@@ -15,7 +15,6 @@ describe('winston', () => {
   });
 
   describe('transport', () => {
-
     it('should send log records', (done) => {
       runServer({}, {}, (server, finish) => {
         const logger = winston.createLogger({
