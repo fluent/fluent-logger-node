@@ -32,11 +32,17 @@ declare namespace fluentLogger {
     password: string;
   }
 
-  class FluentSender {
-    constructor(tagPrefix: string, options: Options);
-
-    public emit(...args: string[]): void;
-    public end(label: string, data: any, callback: () => void): void;
+  type Timestamp = number | Date;
+  type Callback = (err?: Error) => void;
+  
+  class FluentSender<T> {
+      constructor(tagPrefix: string, options: Options);
+      
+      emit(data: T, callback?: Callback): void;
+      emit(data: T, timestamp: Timestamp, callback?: Callback): void;
+      emit(label: string, data: T, callback?: Callback): void;
+      emit(label: string, data: T, timestamp: Timestamp, callback?: Callback): void;
+      end(label: string, data: T, callback: Callback): void;
   }
 
   class FluentTransport extends Transform {
