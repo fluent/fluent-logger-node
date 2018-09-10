@@ -67,6 +67,17 @@ The emit method has following signature
 Where only the `record` argument is required. If the label is set it will be
 appended to the configured tag.
 
+### Disable automatic reconnect 
+Both Singleton and Instance style can disable automatic reconnect allowing the user to handle reconnect himself
+```js
+logger.configure('tag_prefix', {
+   host: 'localhost',
+   port: 24224,
+   timeout: 3.0,
+   enableReconnect: false // defaults to true
+});
+```
+
 ### Shared key authentication
 
 Logger configuration:
