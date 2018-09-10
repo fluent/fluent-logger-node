@@ -203,7 +203,7 @@ var config = {
   requireAckResponse: true // Add this option to wait response from Fluentd certainly
 };
 var fluentTransport = require('fluent-logger').support.winstonTransport();
-var logger = winston.createLogger({
+var logger = new (winston.Logger)({
     transports: [new fluentTransport('mytag', config), new (winston.transports.Console)()]
 });
 
