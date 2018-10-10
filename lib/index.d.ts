@@ -76,6 +76,19 @@ declare namespace fluentLogger {
   
   function configure(tag: string, options: Options): void;
   function createFluentSender<T>(tag: string, options: Options): FluentSender<T>;
+
+  function emit<T>(data: T, callback?: Callback): void;
+  function emit<T>(data: T, timestamp: Timestamp, callback?: Callback): void;
+  function emit<T>(label: string, data: T, callback?: Callback): void;
+  function emit<T>(label: string, data: T, timestamp: Timestamp, callback?: Callback): void;
+  function end<T>(label: string, data: T, callback: Callback): void;
+
+  function on(event: string | symbol, listener: (...args: any[]) => void): void;
+  function once(event: string | symbol, listener: (...args: any[]) => void): void;
+  function removeListener(event: string | symbol, listener: (...args: any[]) => void): void;
+  function removeAllListeners(event?: string | symbol): void;
+  function setMaxListeners(n: number): void;
+  function getMaxListeners(): number;
 }
 
 export = fluentLogger;
