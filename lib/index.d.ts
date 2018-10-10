@@ -75,7 +75,7 @@ declare namespace fluentLogger {
   let EventTime: InnerEventTime;
   
   function configure(tag: string, options: Options): void;
-  function createFluentSender(tag: string, options: Options): FluentSender;
+  function createFluentSender<T>(tag: string, options: Options): FluentSender<T>;
 }
 
 export = fluentLogger;
