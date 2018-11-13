@@ -65,7 +65,7 @@ declare namespace fluentLogger {
   }
 
   interface Constructable<T, U> {
-    new(options: U) : T;
+    new(tag: string, options: U) : T;
   }
 
   let support: {
