@@ -161,7 +161,56 @@ Server configuration:
 
 FYI: You can generate certificates using fluent-ca-generate command since Fluentd 1.1.0.
 
-See also [How to enable TLS/SSL encryption](https://docs.fluentd.org/v1.0/articles/in_forward#how-to-enable-tls/ssl-encryption).
+See also [How to enable TLS/SSL encryption](https://docs.fluentd.org/v1.0/articles/in_forward#how-to-enable-tls-encryption).
+
+### Mutual TLS Authentication
+
+Logger configuration:
+
+```js
+var logger = require('fluent-logger').createFluentSender('dummy', {
+  host: 'localhost',
+  port: 24224,
+  timeout: 3.0,
+  reconnectInterval: 600000, // 10 minutes
+  security: {
+    clientHostname: "client.localdomain",
+    sharedKey: "secure_communication_is_awesome"
+  },
+  tls: true,
+  tlsOptions: {
+    ca: fs.readFileSync('/path/to/ca_cert.pem'),
+    cert: fs.readFileSync('/path/to/client-cert.pem'),
+    key: fs.readFileSync('/path/to/client-key.pem'),
+    passphrase: 'very-secret'
+  }
+});
+logger.emit('debug', { message: 'This is a message' });
+```
+
+Server configuration:
+
+```aconf
+<source>
+  @type forward
+  port 24224
+  <transport tls>
+    ca_path /path/to/ca-cert.pem
+    cert_path /path/to/server-cert.pem
+    private_key_path /path/to/server-key.pem
+    private_key_passphrase very_secret_passphrase
+    client_cert_auth true
+  </transport>
+  <security>
+    self_hostname input.testing.local
+    shared_key secure_communication_is_awesome
+  </security>
+</source>
+
+<match dummy.*>
+  @type stdout
+</match>
+```
 
 ### EventTime support
 
