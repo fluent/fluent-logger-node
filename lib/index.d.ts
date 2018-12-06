@@ -6,6 +6,7 @@
 /// <reference types="node" />
 
 import { Transform } from 'winston-transport';
+import { Writable } from 'stream';
 
 declare namespace fluentLogger {
   interface Options {
@@ -32,6 +33,11 @@ declare namespace fluentLogger {
     password: string;
   }
 
+  interface StreamOptions {
+    label?: string;
+    encoding?: string;
+  }
+
   type Timestamp = number | Date;
   type Callback = (err?: Error) => void;
   
@@ -43,6 +49,8 @@ declare namespace fluentLogger {
       emit(label: string, data: T, callback?: Callback): void;
       emit(label: string, data: T, timestamp: Timestamp, callback?: Callback): void;
       end(label: string, data: T, callback: Callback): void;
+      toStream(label: string): Writable;
+      toStream(opt: StreamOptions): Writable;
   }
 
   class FluentTransport extends Transform {
