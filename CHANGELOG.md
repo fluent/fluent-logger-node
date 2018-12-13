@@ -1,5 +1,11 @@
 # v3.x
 
+## v3.2.2 - 2018-12-13
+
+### Improvements
+
+* Improve TypeScript definitions #118 #125
+
 ## v3.2.1 - 2018-10-19
 
 ### Fixes
