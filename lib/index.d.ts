@@ -29,8 +29,8 @@ declare namespace fluentLogger {
   interface Security {
     clientHostname: string;
     sharedKey: string;
-    username: string;
-    password: string;
+    username?: string;
+    password?: string;
   }
 
   interface StreamOptions {
