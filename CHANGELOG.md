@@ -1,5 +1,15 @@
 # v3.x
 
+## v3.2.3 - 2019-01-10
+
+### Improvements
+
+* Update type definition according to documentation for security #127
+
+### Fixes
+
+* Fix user based authentication #128 #129
+
 ## v3.2.2 - 2018-12-13
 
 ### Improvements
