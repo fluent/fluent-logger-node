@@ -1,6 +1,6 @@
 {
   "name": "fluent-logger",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "main": "./lib/index.js",
   "scripts": {
     "test": "mocha -t 10000 --recursive",
