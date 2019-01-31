@@ -35,7 +35,7 @@ describe('winston', () => {
             expect(data[0].time).exist;
             expect(data[0].data.message).to.be.equal('foo bar');
             expect(data[0].data.level).to.be.equal('info');
-            expect(data[0].data.meta.x).to.be.equal(1);
+            expect(data[0].data.x).to.be.equal(1);
             done();
           });
         }, 1000);
