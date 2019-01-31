@@ -1,5 +1,11 @@
 # v3.x
 
+## v3.3.0 - 2019-01-31
+
+### Improvements
+
+* Improve performance #131
+
 ## v3.2.3 - 2019-01-10
 
 ### Improvements
