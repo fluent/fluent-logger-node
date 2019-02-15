@@ -290,6 +290,32 @@ let doTest = (tls) => {
     done();
   });
 
+  it('should flush queue on reconnect', (done) => {
+    const s = new FluentSender('debug', Object.assign({}, clientOptions, {
+      port: 43210,
+      reconnectInterval: 20,
+      internalLogger: {
+        info: () => {},
+        error: () => {}
+      }
+    }));
+    s._setupErrorHandler();
+    s.emit('record', { number: 1});
+    s.emit('record', { number: 2});
+    setTimeout(() => {
+      runServer({requireAckResponse: true, port: 43210}, serverOptions, (server, finish) => {
+        setTimeout(() => {
+          finish((data) => {
+            expect(data.length).to.be.equal(2);
+            expect(data[0].data.number).to.be.equal(1);
+            expect(data[1].data.number).to.be.equal(2);
+            done();
+          });
+        }, 20);
+      });
+    }, 100);
+  });
+
   [
     {
       name: 'tag and record',
@@ -594,6 +620,38 @@ let doTest = (tls) => {
         });
       });
     });
+  });
+
+  it('should flush queue on reconnect for stream', (done) => {
+    const s = new FluentSender('debug', Object.assign({}, clientOptions, {
+      port: 43210,
+      reconnectInterval: 20,
+      internalLogger: {
+        info: () => {},
+        error: () => {}
+      }
+    }));
+    s._setupErrorHandler();
+    const ss = s.toStream('record');
+    const pt = new stream.PassThrough();
+    pt.pipe(ss);
+    pt.push('data1\n');
+    pt.push('data2\ndata');
+    pt.push('3\ndata4\n');
+    pt.end();
+    setTimeout(() => {
+      runServer({port: 43210}, serverOptions, (server, finish) => {
+        setTimeout(() => {
+          finish((data) => {
+            expect(data[0].data.message).to.be.equal('data1');
+            expect(data[1].data.message).to.be.equal('data2');
+            expect(data[2].data.message).to.be.equal('data3');
+            expect(data[3].data.message).to.be.equal('data4');
+            done();
+          });
+        }, 20);
+      });
+    }, 100);
   });
 
   it('should process messages step by step on requireAckResponse=true', (done) => {
