@@ -1,5 +1,12 @@
 # v3.x
 
+## v3.3.1 - 2019-02-19
+
+### Fixes
+
+* Set up default error handler for winston #136
+* Flush sendQueue after reconnect #136
+
 ## v3.3.0 - 2019-01-31
 
 ### Improvements
