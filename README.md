@@ -263,19 +263,24 @@ var config = {
   requireAckResponse: true // Add this option to wait response from Fluentd certainly
 };
 var fluentTransport = require('fluent-logger').support.winstonTransport();
+var fluent = new fluentTransport('mytag', config);
 var logger = winston.createLogger({
-    transports: [new fluentTransport('mytag', config), new (winston.transports.Console)()]
+  transports: [fluent, new (winston.transports.Console)()]
 });
 
-logger.on('logging', (transport, level, message, meta) => {
-  if (meta.end && transport.sender && transport.sender.end) {
-    transport.sender.end();
-  }
+logger.on('flush', () => {
+  console.log("flush");
+})
+
+logger.on('finish', () => {
+  console.log("finish");
+  fluent.sender.end("end", {}, () => {})
 });
 
 logger.log('info', 'this log record is sent to fluent daemon');
 logger.info('this log record is sent to fluent daemon');
-logger.info('end of log message', { end: true });
+logger.info('end of log message');
+logger.end();
 ```
 
 **NOTE** If you use `winston@2`, you can use `fluent-logger@2.7.0` or earlier. If you use `winston@3`, you can use `fluent-logger@2.8` or later.
