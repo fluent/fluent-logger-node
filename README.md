@@ -161,7 +161,7 @@ Server configuration:
 
 FYI: You can generate certificates using fluent-ca-generate command since Fluentd 1.1.0.
 
-See also [How to enable TLS/SSL encryption](https://docs.fluentd.org/v1.0/articles/in_forward#how-to-enable-tls-encryption).
+See also [How to enable TLS/SSL encryption](https://docs.fluentd.org/input/forward#how-to-enable-tls-encryption).
 
 ### Mutual TLS Authentication
 
