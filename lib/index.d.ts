@@ -24,6 +24,7 @@ declare namespace fluentLogger {
     flushInterval?: number;
     sendQueueSizeLimit?: number;
     security?: Security;
+    internalLogger?: Logger;
   }
 
   interface Security {
@@ -36,6 +37,16 @@ declare namespace fluentLogger {
   interface StreamOptions {
     label?: string;
     encoding?: string;
+  }
+
+  interface Logger {
+    info: LogFunction;
+    error: LogFunction;
+    [other: string]: any;
+  }
+
+  interface LogFunction {
+    (message: any, data?: any, ...extra: any[]): any
   }
 
   type Timestamp = number | Date;
