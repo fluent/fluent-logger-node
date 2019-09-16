@@ -5,7 +5,6 @@
 
 /// <reference types="node" />
 
-import { Transform } from 'winston-transport';
 import { Writable } from 'stream';
 
 declare namespace fluentLogger {
@@ -40,10 +39,10 @@ declare namespace fluentLogger {
 
   type Timestamp = number | Date;
   type Callback = (err?: Error) => void;
-  
+
   class FluentSender<T> {
       constructor(tagPrefix: string, options: Options);
-      
+
       emit(data: T, callback?: Callback): void;
       emit(data: T, timestamp: Timestamp, callback?: Callback): void;
       emit(label: string, data: T, callback?: Callback): void;
@@ -51,12 +50,6 @@ declare namespace fluentLogger {
       end(label: string, data: T, callback: Callback): void;
       toStream(label: string): Writable;
       toStream(opt: StreamOptions): Writable;
-  }
-
-  class FluentTransport extends Transform {
-    constructor(opt: Options);
-
-    public log(info: string, callback: (err: Error, b: boolean) => void): any;
   }
 
   class InnerEventTime {
@@ -76,12 +69,8 @@ declare namespace fluentLogger {
     new(tag: string, options: U) : T;
   }
 
-  let support: {
-    winstonTransport: () => Constructable<FluentTransport, Options>
-  };
-
   let EventTime: InnerEventTime;
-  
+
   function configure(tag: string, options: Options): void;
   function createFluentSender<T>(tag: string, options: Options): FluentSender<T>;
 
