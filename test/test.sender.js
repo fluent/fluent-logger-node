@@ -912,6 +912,26 @@ let doTest = (tls) => {
       });
     });
   });
+
+  it('should limit messages stored in queue if server is not available', (done) => {
+    runServer({}, serverOptions, (server, finish) => {
+      finish(() => {
+        const s = new FluentSender('debug', Object.assign({}, clientOptions, {
+          port: server.port,
+          messageQueueSizeLimit: 3
+        }));
+        s.emit('message1', {});
+        s.emit('message2', {});
+        s.emit('message3', {});
+        s.emit('message4', {});
+        expect(s._sendQueue.length).to.be.equal(3);
+        expect(s._sendQueue[0].tag).to.be.equal('debug.message2');
+        expect(s._sendQueue[1].tag).to.be.equal('debug.message3');
+        expect(s._sendQueue[2].tag).to.be.equal('debug.message4');
+        done();
+      });
+    });
+  });
 };
 
 describe('FluentSender', () => {
