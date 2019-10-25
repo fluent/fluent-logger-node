@@ -323,13 +323,18 @@ let doTest = (tls) => {
         eventMode: 'PackedForward'
       }));
       const emits = [];
+      const total = 4;
       function emit(messageData) {
         emits.push((asyncDone) => {
-          s1.emit(`multi-${messageData.number}`, { text: messageData.text});
-          asyncDone(); // run immediately do not wait for ack
+          if (messageData.number === total) { // end
+            s1.emit(`multi-${messageData.number}`, { text: messageData.text}, asyncDone); // wait for send
+          } else {
+            s1.emit(`multi-${messageData.number}`, { text: messageData.text});
+            asyncDone(); // run immediately do not wait for ack
+          }
         });
       }
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i <= total; i++) {
         emit({ number: i, text: `This is text No ${i}` });
       }
       emits.push(() => {
