@@ -316,6 +316,41 @@ let doTest = (tls) => {
     }, 100);
   });
 
+  it('should send messages with different tags correctly in PackedForward', (done) => {
+    runServer({}, serverOptions, (server, finish) => {
+      const s1 = new FluentSender('debug', Object.assign({}, clientOptions, {
+        port: server.port,
+        eventMode: 'PackedForward'
+      }));
+      const emits = [];
+      const total = 4;
+      function emit(messageData) {
+        emits.push((asyncDone) => {
+          if (messageData.number === total) { // end
+            s1.emit(`multi-${messageData.number}`, { text: messageData.text}, asyncDone); // wait for send
+          } else {
+            s1.emit(`multi-${messageData.number}`, { text: messageData.text});
+            asyncDone(); // run immediately do not wait for ack
+          }
+        });
+      }
+      for (let i = 0; i <= total; i++) {
+        emit({ number: i, text: `This is text No ${i}` });
+      }
+      emits.push(() => {
+        finish((data) => {
+          expect(data.length).to.be.equal(5);
+          data.forEach((element, index) => {
+            expect(element.tag).to.be.equal(`debug.multi-${index}`);
+            expect(element.data.text).to.be.equal(`This is text No ${index}`);
+          });
+          done();
+        });
+      });
+      async.series(emits);
+    });
+  });
+
   [
     {
       name: 'tag and record',
