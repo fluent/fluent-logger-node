@@ -367,6 +367,10 @@ Set flush interval in milliseconds. This option has no effect in `Message` mode.
 The logger stores emitted events in buffer and flush events for each interval.
 Default `100`.
 
+**messageQueueSizeLimit**
+
+Maximum number of messages that can be in queue at the same time. If a new message is received and it overflows the queue then the oldest message will be removed before adding the new item. This option has effect only in `Message` mode. No limit by default.
+
 **security.clientHostname**
 
 Set hostname of this logger. Use this value for hostname based authentication.
