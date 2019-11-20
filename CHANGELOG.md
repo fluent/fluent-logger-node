@@ -1,5 +1,17 @@
 # v3.x
 
+## v3.4.0 - 2019-11-20
+
+### Improvements
+
+* Gracefully free resources on `.end()` #144
+* Update type definitions for TypeScript #145, #147
+* Add new option messageQueueSizeLimit #152
+
+### Fixes
+
+* Fix packets on multiple tags get corrput and multiple calls of callbacks on error #155
+
 ## v3.3.1 - 2019-02-19
 
 ### Fixes
