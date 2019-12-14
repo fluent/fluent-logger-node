@@ -1,5 +1,11 @@
 # v3.x
 
+## v3.4.1 - 2019-12-14
+
+### Fixes
+
+* Fix type definition for winston support #163
+
 ## v3.4.0 - 2019-11-20
 
 ### Improvements
