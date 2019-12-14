@@ -76,9 +76,9 @@ declare namespace fluentLogger {
     static fromTimestamp(t: number): InnerEventTime;
   }
 
-  interface Constructable<T, U> {
-    new(tag: string, options: U) : T;
-  }
+  let support: {
+    winstonTransport: any
+  };
 
   let EventTime: InnerEventTime;
 
