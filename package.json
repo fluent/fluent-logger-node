@@ -31,14 +31,15 @@
     "node": ">=6"
   },
   "dependencies": {
-    "msgpack-lite": "*"
+    "msgpack-lite": "*",
+    "tiny-queue": "^0.2.1"
   },
   "devDependencies": {
     "async": "*",
     "chai": "*",
     "eslint": "^5.1.0",
     "eslint-plugin-node": "*",
-    "mocha": "*",
+    "mocha": "^6.0.0",
     "selfsigned": "*",
     "winston": "*"
   },
