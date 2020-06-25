@@ -31,7 +31,8 @@
     "node": ">=6"
   },
   "dependencies": {
-    "msgpack-lite": "*"
+    "msgpack-lite": "*",
+    "tiny-queue": "^0.2.1"
   },
   "devDependencies": {
     "async": "*",
