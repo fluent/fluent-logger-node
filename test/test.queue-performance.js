@@ -55,4 +55,4 @@ describe('queue performance', () => {
     console.log(`Queue time: ${totalQueue[0] + totalQueue[1] / 1e9}`);
     expect(totalArray[0] + totalArray[1] / 1e9 - (totalQueue[0] + totalQueue[1] / 1e9) < 0.001).to.be.true;
   });
-})
+});
