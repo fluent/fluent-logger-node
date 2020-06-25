@@ -39,7 +39,7 @@
     "chai": "*",
     "eslint": "^5.1.0",
     "eslint-plugin-node": "*",
-    "mocha": "*",
+    "mocha": "^6.0.0",
     "selfsigned": "*",
     "winston": "*"
   },
