@@ -43,7 +43,7 @@ logger.configure('tag_prefix', {
    reconnectInterval: 600000 // 10 minutes
 });
 
-// send an event record with 'tag.label'
+// send an event record with 'tag_prefix.label'
 logger.emit('label', {record: 'this is a log'});
 ```
 
